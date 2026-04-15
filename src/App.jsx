@@ -1,18 +1,16 @@
-import React, { useState, useEffect, createRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Menu } from "lucide-react";
-import { Routes, Route, useLocation, Outlet } from "react-router-dom"; 
+import { Routes, Route, useLocation, Outlet } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 // Componentes Globales
 import Sidebar from "./components/Sidebar";
-import ScrollToTop from "./components/ScrollToTop";
 
 // Páginas
 import Home from "./components/Home.jsx";
 import Ajustes from "./components/pages/Ajustes";
 import Aprendizaje from "./components/pages/Aprendizaje";
 import Acerca from "./components/pages/Acerca.jsx";
-import TranslatorView from "./components/TranslatorView";
 
 // Páginas "Limpias" (Juegos y Aprendizaje interactivo)
 import Desafio from "./components/pages/Juegos/Desafio.jsx";
@@ -31,7 +29,8 @@ export default function App() {
   const [animating, setAnimating] = useState(false);
   const [tutorialActivo, setTutorialActivo] = useState(() => !localStorage.getItem("tourSignAICompleted"));
   const location = useLocation();
-  const nodeRef = createRef(null);
+  const nodeRef = useRef(null);
+  const prevDarkRef = useRef(document.documentElement.classList.contains("dark"));
 
   useEffect(() => {
     window.closeSidebar = () => setSidebarOpen(false);
@@ -41,12 +40,15 @@ export default function App() {
   useEffect(() => {
     const observer = new MutationObserver((mutations) => {
       for (let mutation of mutations) {
-        if (mutation.attributeName === "class" && !animating) {
+        if (mutation.attributeName !== "class") continue;
+        const isDark = document.documentElement.classList.contains("dark");
+        if (isDark !== prevDarkRef.current && !animating) {
+          prevDarkRef.current = isDark;
           triggerAnimation();
         }
       }
     });
-    observer.observe(document.documentElement, { attributes: true });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
     return () => observer.disconnect();
   }, [animating]);
 
@@ -128,7 +130,6 @@ export default function App() {
                       <Route path="/Ajustes" element={<Ajustes sidebarOpen={sidebarOpen} />} />
                       <Route path="/Aprendizaje" element={<Aprendizaje sidebarOpen={sidebarOpen} />} />
                       <Route path="/Acerca" element={<Acerca sidebarOpen={sidebarOpen} />} />
-                      <Route path="/Traductor" element={<TranslatorView sidebarOpen={sidebarOpen} />} />
                     </Route>
 
                     <Route element={<CleanLayout />}>

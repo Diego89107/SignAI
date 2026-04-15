@@ -13,9 +13,6 @@ const createWindow = () => {
     width: 1280,
     height: 720,
     icon: getWindowsIconPath(),
-    webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
-    },
   });
 
   if (!app.isPackaged) {

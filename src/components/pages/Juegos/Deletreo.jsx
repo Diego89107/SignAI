@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Undo2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { palabrasDeletreo as listaPalabras } from "../../../data/palabras";
 
 // ⚠️ IMPORTA AQUÍ LAS IMÁGENES DEL ABECEDARIO
 import imgA from "../../../assets/elefante_lsm.svg"; // Cambia estas por las letras reales
@@ -23,14 +24,6 @@ const obtenerImagenLetra = (letra) => {
 export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
   const timeoutRef = useRef(null);
-
-  // 1. BASE DE DATOS DE PALABRAS (Puedes agregar las que necesites)
-  const listaPalabras = [
-    "AGUA",
-    "MESA",
-    "GATO",
-    "CARRO"
-  ];
 
   // ESTADOS DEL JUEGO
   const [nivelActual, setNivelActual] = useState(0);

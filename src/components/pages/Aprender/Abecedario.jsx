@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useRef, Suspense } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Undo2, Camera, Play, StopCircle, CheckCircle } from "lucide-react";
+import useCamera from "../../../hooks/useCamera";
 
 // 🧊 IMPORTACIONES PARA EL MODELO 3D
 import { Canvas } from "@react-three/fiber";
@@ -21,12 +22,8 @@ export default function Abecedario({ sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
   const [letraActual, setLetraActual] = useState("A");
   const [mostrarExito, setMostrarExito] = useState(false);
-  
-  const videoRef = useRef(null);
-  const [cameraActive, setCameraActive] = useState(false);
-  const [currentStream, setCurrentStream] = useState(null);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false);
+
+  const { videoRef, active: cameraActive, errorMsg, loading, start: startCamera, stop: stopStream } = useCamera();
 
   // Generamos el abecedario completo de la A a la Z
   const abecedario = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
@@ -36,49 +33,6 @@ export default function Abecedario({ sidebarOpen, setSidebarOpen }) {
       setSidebarOpen(false);
     }
   }, [setSidebarOpen]);
-
-  useEffect(() => {
-    if (cameraActive && currentStream && videoRef.current) {
-      videoRef.current.srcObject = currentStream;
-    }
-  }, [cameraActive, currentStream]);
-
-  useEffect(() => {
-    return () => stopStream();
-  }, []);
-
-  const stopStream = () => {
-    if (currentStream) {
-      currentStream.getTracks().forEach((track) => track.stop());
-    }
-    setCurrentStream(null);
-    setCameraActive(false);
-  };
-
-  const startCamera = async () => {
-    setLoading(true);
-    setErrorMsg("");
-
-    try {
-      const constraints = {
-        video: {
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          facingMode: "user"
-        }
-      };
-
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      setCurrentStream(stream);
-      setCameraActive(true);
-    } catch (err) {
-      console.error("Error al acceder a la cámara:", err);
-      setErrorMsg("No se pudo acceder a la cámara. Revisa los permisos.");
-      setCameraActive(false);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // ⚠️ SIMULADOR DE IA: Pasa automáticamente a la siguiente letra
   const manejarAcierto = () => {

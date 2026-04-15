@@ -17,34 +17,33 @@ export default function Home({ sidebarOpen, onTutorialChange }) {
     const calcularPosicion = () => {
       if (botonRef.current) {
         const rect = botonRef.current.getBoundingClientRect();
-        
         const radioMaximoPantalla = Math.ceil(Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2));
-
         setBotonCoords({
-          x: rect.left + rect.width / 2, // Centro X
-          y: rect.top + rect.height / 2, // Centro Y
-          r: Math.max(rect.width, rect.height) / 2 + 15, // Hueco limpio
-          maxR: radioMaximoPantalla // Límite del agua en píxeles exactos
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+          r: Math.max(rect.width, rect.height) / 2 + 15,
+          maxR: radioMaximoPantalla,
         });
       }
     };
 
     const tourCompletado = localStorage.getItem("tourSignAICompleted");
+    if (tourCompletado) return;
 
-    if (!tourCompletado) {
-      calcularPosicion();
-      setMostrarTutorial(true);
-      onTutorialChange?.(true);
+    calcularPosicion();
+    setMostrarTutorial(true);
+    onTutorialChange?.(true);
 
-      // 1. Iniciamos el flujo de agua casi al instante
-      setTimeout(() => setAnimarAgua(true), 100);
-      // 2. Aparece la burbuja de texto cuando el agua cubre la pantalla
-      setTimeout(() => setAnimarTexto(true), 900);
+    const tAgua = setTimeout(() => setAnimarAgua(true), 100);
+    const tTexto = setTimeout(() => setAnimarTexto(true), 900);
+    window.addEventListener("resize", calcularPosicion);
 
-      window.addEventListener("resize", calcularPosicion);
-      return () => window.removeEventListener("resize", calcularPosicion);
-    }
-  }, []);
+    return () => {
+      clearTimeout(tAgua);
+      clearTimeout(tTexto);
+      window.removeEventListener("resize", calcularPosicion);
+    };
+  }, [onTutorialChange]);
 
   const cerrarTutorial = () => {
     setAnimarTexto(false);

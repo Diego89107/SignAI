@@ -1,19 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 import { X, Hand, Settings, BookOpen, HelpCircle } from "lucide-react";
+import useTheme from "../hooks/useTheme";
 
 export default function Sidebar({ isOpen, setIsOpen }) {
-  const [isDark, setIsDark] = useState(false);
-
-  // Detectar el modo oscuro global
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      setIsDark(document.documentElement.classList.contains("dark"));
-    });
-    observer.observe(document.documentElement, { attributes: true });
-    setIsDark(document.documentElement.classList.contains("dark"));
-    return () => observer.disconnect();
-  }, []);
+  const isDark = useTheme();
 
   // 🔹 Clases base (mantienen tu estilo original)
   const base =

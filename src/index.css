@@ -57,10 +57,6 @@ html {
   animation: zoomInGlow 0.4s ease forwards;
 }
 
-#app-wrapper min-h-screen {
-   min-height: 100vh !important;
-}
-
 @keyframes zoomOutGlow {
   0% {
     transform: scale(1);

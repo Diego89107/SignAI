@@ -1,41 +1,25 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Undo2, Camera, Play, StopCircle, Timer, CheckCircle, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import useCamera from "../../../hooks/useCamera";
+import { palabrasDesafio as listaDesafio } from "../../../data/palabras";
 
 export default function Desafio({ sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
 
-  // 1. LISTA DE PALABRAS DEL DESAFÍO
-  const listaDesafio = [
-    "HOLA", "PERRO", "AGUA", "MESA", "GATO", 
-    "AMARILLO", "CASA", "LIBRO", "TIEMPO", "FAMILIA"
-  ];
-
   // ESTADOS DEL JUEGO
   const [juegoIniciado, setJuegoIniciado] = useState(false);
   const [rondaActual, setRondaActual] = useState(0);
-  const [estadoRonda, setEstadoRonda] = useState("esperando"); 
-  const [tiempoRestante, setTiempoRestante] = useState(20); 
+  const [estadoRonda, setEstadoRonda] = useState("esperando");
+  const [tiempoRestante, setTiempoRestante] = useState(20);
   const [puntaje, setPuntaje] = useState(0);
 
-  // ESTADOS DE LA CÁMARA
-  const videoRef = useRef(null);
-  const [cameraActive, setCameraActive] = useState(false);
-  const [currentStream, setCurrentStream] = useState(null);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { videoRef, active: cameraActive, errorMsg, loading, start, stop: stopStream } = useCamera();
 
   useEffect(() => {
     if (typeof setSidebarOpen === "function") setSidebarOpen(false);
-    return () => stopStream();
   }, [setSidebarOpen]);
-
-  useEffect(() => {
-    if (cameraActive && currentStream && videoRef.current) {
-      videoRef.current.srcObject = currentStream;
-    }
-  }, [cameraActive, currentStream]);
 
   // LÓGICA DEL TEMPORIZADOR
   useEffect(() => {
@@ -51,36 +35,12 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
     return () => clearInterval(timer);
   }, [juegoIniciado, estadoRonda, tiempoRestante]);
 
-  // CONTROL DE LA CÁMARA
-  const stopStream = () => {
-    if (currentStream) {
-      currentStream.getTracks().forEach((track) => track.stop());
-    }
-    setCurrentStream(null);
-    setCameraActive(false);
-  };
-
   const startCamera = async () => {
-    setLoading(true);
-    setErrorMsg("");
-
-    try {
-      const constraints = {
-        video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" }
-      };
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      setCurrentStream(stream);
-      setCameraActive(true);
-      
+    const ok = await start();
+    if (ok) {
       setJuegoIniciado(true);
       setEstadoRonda("jugando");
       setTiempoRestante(20);
-    } catch (err) {
-      console.error("Error al acceder a la cámara:", err);
-      setErrorMsg("No se pudo acceder a la cámara. Revisa los permisos.");
-      setCameraActive(false);
-    } finally {
-      setLoading(false);
     }
   };
 

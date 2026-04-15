@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Undo2 } from "lucide-react";
 
-import abcImg from "../../assets/juegoabc.svg";
+import abcImg from "../../assets/Juegoabc.svg";
 import numerosImg from "../../assets/numeros.svg";
 import coloresImg from "../../assets/colores.svg";
 import presentacionesImg from "../../assets/presentacion.svg";
