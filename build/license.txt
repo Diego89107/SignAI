@@ -1,0 +1,25 @@
+﻿=========================================================
+      ACUERDO DE LICENCIA Y PRIVACIDAD - SIGNAI
+=========================================================
+
+Al instalar y utilizar SignAI, aceptas los siguientes términos y condiciones:
+
+1. PRIVACIDAD TOTAL Y PROCESAMIENTO LOCAL
+En SignAI nos tomamos tu privacidad muy en serio. Esta aplicación ha sido diseñada con una arquitectura de "Privacidad por Diseño":
+- Todo el procesamiento de Inteligencia Artificial (IA) y el reconocimiento de tus manos ocurre de manera 100% LOCAL en tu computadora.
+- NO recopilamos, almacenamos ni compartimos tus datos personales.
+- NO grabamos, guardamos ni enviamos el video o las imágenes de tu cámara web a ningún servidor externo o base de datos en la nube.
+- NO rastreamos tu uso del programa.
+
+2. USO DE LA CÁMARA
+El programa requiere acceso a tu cámara web única y exclusivamente durante el tiempo que la aplicación esté abierta y en pantalla, con el único propósito de detectar las coordenadas de las manos y traducirlas al Lenguaje de Señas en tiempo real. 
+
+3. PROPÓSITO EDUCATIVO
+SignAI es un proyecto de software desarrollado con fines educativos y de accesibilidad. El reconocimiento del lenguaje de señas es un campo complejo impulsado por IA, por lo que las traducciones pueden tener un margen de error. No se recomienda utilizar esta herramienta para escenarios de traducción crítica, legal o médica.
+
+4. SIN GARANTÍAS
+El software se proporciona "tal cual", sin garantía de ningún tipo, expresa o implícita. En ningún caso los creadores de SignAI serán responsables de ningún reclamo, daño u otra responsabilidad que surja del uso de este software.
+
+=========================================================
+Gracias por usar SignAI y apoyar la inclusión.
+=========================================================
