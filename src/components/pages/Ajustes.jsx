@@ -2,20 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Sun, Moon, AudioLines, Speech, Camera, Mic2, Volume2, ChevronDown, MonitorSpeaker, Cloud, Check, User, UserRound } from "lucide-react";
 import useSpeech, { hasElevenKey } from "../../hooks/useSpeech";
 
-// origin: "es" = entrenada nativa en español latino, "en" = inglés (funciona en multilingual_v2 con acento)
 const ELEVEN_VOICES = [
-  { id: "21m00Tcm4TlvDq8ikWAM", name: "Rachel", gender: "Femenina", origin: "en" },
-  { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah", gender: "Femenina", origin: "en" },
-  { id: "AZnzlk1XvdvUeBnXmlld", name: "Domi", gender: "Femenina", origin: "en" },
-  { id: "MF3mGyEYCl7XYWbV9V6O", name: "Elli", gender: "Femenina", origin: "en" },
-  { id: "XB0fDUnXU5powFXDhCwa", name: "Charlotte", gender: "Femenina", origin: "en" },
-  { id: "pNInz6obpgDQGcFmaJgB", name: "Adam", gender: "Masculina", origin: "en" },
-  { id: "TxGEqnHWrfWFTfGW9XjX", name: "Josh", gender: "Masculina", origin: "en" },
-  { id: "VR6AewLTigWG4xSOukaG", name: "Arnold", gender: "Masculina", origin: "en" },
-  { id: "TX3LPaxmHKxFdv7VOQHJ", name: "Liam", gender: "Masculina", origin: "en" },
-  { id: "onwK4e9ZLuTAKqWW03F9", name: "Daniel", gender: "Masculina", origin: "en" },
-  { id: "yoZ06aMxZJJ28mfd3POQ", name: "Sam", gender: "Masculina", origin: "en" },
-  { id: "ErXwobaYiN019PkySvjV", name: "Antoni", gender: "Masculina", origin: "en" },
+  { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah", gender: "Femenina", origin: "es" },
+  { id: "XB0fDUnXU5powFXDhCwa", name: "Charlotte", gender: "Femenina", origin: "es" },
+  { id: "pNInz6obpgDQGcFmaJgB", name: "Adam", gender: "Masculina", origin: "es" },
+  { id: "onwK4e9ZLuTAKqWW03F9", name: "Daniel", gender: "Masculina", origin: "es" },
 ];
 
 function FancyDropdown({ value, options, onChange, placeholder = "Seleccionar…" }) {
