@@ -2,8 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 const STORAGE_KEY = "signai_voice_settings";
 
-const ELEVEN_API_KEY = import.meta.env.VITE_ELEVEN_API_KEY || "";
-
 const defaults = {
   provider: "webspeech",
   rate: 1,
@@ -13,7 +11,14 @@ const defaults = {
   voiceURI: "",
   elevenVoiceId: "EXAVITQu4vr4xnSDxMaL",
   elevenModel: "eleven_multilingual_v2",
+  elevenStability: 0.5,
+  elevenSimilarity: 0.75,
+  elevenStyle: 0,
+  elevenSpeakerBoost: true,
 };
+
+export const ELEVEN_API_KEY = import.meta.env.VITE_ELEVEN_API_KEY || "";
+export const hasElevenKey = () => Boolean(ELEVEN_API_KEY);
 
 export function loadVoiceSettings() {
   try {
@@ -111,8 +116,10 @@ export default function useSpeech() {
               text,
               model_id: settings.elevenModel,
               voice_settings: {
-                stability: 0.5,
-                similarity_boost: 0.75,
+                stability: settings.elevenStability,
+                similarity_boost: settings.elevenSimilarity,
+                style: settings.elevenStyle,
+                use_speaker_boost: settings.elevenSpeakerBoost,
                 speed: settings.rate,
               },
             }),
@@ -127,7 +134,6 @@ export default function useSpeech() {
         const url = URL.createObjectURL(blob);
         const audio = new Audio(url);
         audio.volume = settings.volume;
-        audio.playbackRate = settings.rate;
         audio.onended = () => {
           setSpeaking(false);
           URL.revokeObjectURL(url);
