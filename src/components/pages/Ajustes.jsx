@@ -3,10 +3,10 @@ import { Sun, Moon, AudioLines, Speech, Camera, Mic2, Volume2, ChevronDown, Moni
 import useSpeech, { hasElevenKey } from "../../hooks/useSpeech";
 
 const ELEVEN_VOICES = [
-  { id: "EXAVITQu4vr4xnSDxMaL", name: "Sarah", gender: "Femenina", origin: "es" },
-  { id: "XB0fDUnXU5powFXDhCwa", name: "Charlotte", gender: "Femenina", origin: "es" },
-  { id: "pNInz6obpgDQGcFmaJgB", name: "Adam", gender: "Masculina", origin: "es" },
-  { id: "onwK4e9ZLuTAKqWW03F9", name: "Daniel", gender: "Masculina", origin: "es" },
+  { id: "6BEk9bRlUBhlAoIbhBYK", name: "Arturo", gender: "Masculina", origin: "es" },
+  { id: "pBabaO9WxfrjXjKADHma", name: "Cindy", gender: "Femenina", origin: "es" },
+  { id: "hrlCBOGwBPZYViXHeZjS", name: "Sofia", gender: "Femenina", origin: "es" },
+  { id: "qRUgOhnxGASxirG4fKjv", name: "David", gender: "Masculina", origin: "es" },
 ];
 
 function FancyDropdown({ value, options, onChange, placeholder = "Seleccionar…" }) {
