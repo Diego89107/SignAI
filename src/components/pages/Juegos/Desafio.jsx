@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Undo2, Camera, Play, StopCircle, Timer, CheckCircle, XCircle } from "lucide-react";
+import { Camera, Play, StopCircle, Timer, CheckCircle, XCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import useCamera from "../../../hooks/useCamera";
 import { palabrasDesafio as listaDesafio } from "../../../data/palabras";
+import PageHeader from "../../common/PageHeader";
 
 export default function Desafio({ sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
@@ -74,18 +75,7 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
     // ⚠️ pt-14 empuja todo el contenido hacia arriba justo debajo del botón Volver
     <div className="relative isolate min-h-screen w-full bg-[#f8f9fa] dark:bg-[#0b0f19] text-gray-900 dark:text-gray-100 flex flex-col pt-14 px-4 sm:px-6 lg:px-8 pb-4">
       
-      {/* 🔙 Botón volver y Título */}
-      <button
-        onClick={() => navigate(-1)}
-        className="absolute top-4 left-4 flex items-center gap-2 text-gray-800 dark:text-gray-100 hover:text-indigo-600 transition-all duration-300 z-20"
-      >
-        <Undo2 size={24} strokeWidth={2.2} />
-        <span className="hidden sm:inline font-bold">Volver</span>
-      </button>
-
-      <h1 className="absolute top-4 right-6 text-xl font-bold tracking-wide z-20 mt-1">
-        SignAI
-      </h1>
+      <PageHeader />
 
       {/* CONTENEDOR PRINCIPAL */}
       <div className="flex-1 w-full max-w-4xl mx-auto flex flex-col items-center justify-center">

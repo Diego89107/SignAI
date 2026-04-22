@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Undo2 } from "lucide-react"; 
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import PageHeader from "../../common/PageHeader";
 
 // Asegúrate de que la ruta a tus assets sea correcta
 import dorsoImg from "../../../assets/reverso_carta.svg"; 
@@ -113,17 +113,7 @@ export default function Memorama({ sidebarOpen, setSidebarOpen }) {
 
   return (
     <div className="relative isolate min-h-screen w-full bg-gray-50 dark:bg-[#0b0f19] text-gray-900 dark:text-gray-100 flex flex-col items-center pt-14 pb-10 overflow-hidden px-4 sm:px-6 lg:px-8">
-      <button
-        onClick={() => navigate(-1)}
-        className="absolute top-4 left-4 sm:left-6 flex items-center gap-2 text-gray-800 dark:text-gray-100 hover:text-indigo-400 transition-all duration-300 z-20"
-      >
-        <Undo2 size={24} strokeWidth={2.2} />
-        <span className="hidden sm:inline font-medium">Volver</span>
-      </button>
-
-      <h1 className="absolute top-5 right-6 sm:right-10 text-xl font-semibold z-20">
-        SignAI
-      </h1>
+      <PageHeader />
 
       <div className="z-10 w-full max-w-6xl px-6 flex flex-col items-center">
         

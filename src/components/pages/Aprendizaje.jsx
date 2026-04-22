@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import PageHeader from "../common/PageHeader";
 import abcImg from "../../assets/abc.svg";
 import juegosImg from "../../assets/juegos.svg";
 
@@ -35,7 +36,7 @@ export default function Aprendizaje({ sidebarOpen }) {
 
       <div className="fixed inset-0 bg-gray-50 dark:bg-[#0b0f19] -z-10 transition-colors duration-700 pointer-events-none" />
 
-      <h1 className="absolute top-6 right-10 text-xl font-bold z-20">SignAI</h1>
+      <PageHeader showBack={false} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 px-6 max-w-3xl">
         {cards.map((card, index) => (

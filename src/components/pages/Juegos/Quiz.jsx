@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Undo2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { respuestasIncorrectasQuiz as respuestasIncorrectas } from "../../../data/palabras";
+import PageHeader from "../../common/PageHeader";
 
 // Imagenes de preguntas ../../../assets/
 import perroImg from "../../../assets/perro.svg";
@@ -110,18 +110,7 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
   return (
     <div className="relative isolate min-h-screen w-full bg-gray-50 dark:bg-[#0b0f19] text-gray-900 dark:text-gray-100 flex flex-col justify-center items-center overflow-hidden pt-14 pb-4 sm:pb-8 px-4 sm:px-6 lg:px-8">
       
-      {/* 🔙 Botón volver y Título */}
-      <button
-        onClick={() => navigate(-1)}
-        className="absolute top-4 left-4 sm:left-6 flex items-center gap-2 text-gray-800 dark:text-gray-100 hover:text-indigo-400 transition-all duration-300 z-20"
-      >
-        <Undo2 size={24} strokeWidth={2.2} />
-        <span className="hidden sm:inline font-medium">Volver</span>
-      </button>
-
-      <h1 className="absolute top-5 right-6 sm:right-10 text-xl font-semibold z-20">
-        SignAI
-      </h1>
+      <PageHeader />
 
       {/* 🎮 CONTENIDO DEL JUEGO */}
       <div className="z-10 w-full max-w-5xl px-6">

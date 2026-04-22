@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Undo2 } from "lucide-react";
+import PageHeader from "../common/PageHeader";
 
 import memoramaImg from "../../assets/memorama.svg";
 import quizImg from "../../assets/quiz.svg";
@@ -32,18 +32,7 @@ export default function JuegosInteractivos({ sidebarOpen, setSidebarOpen }) {
       bg-gray-50 dark:bg-[#0b0f19] text-gray-900 dark:text-gray-100 
       transition-all duration-700 ease-in-out pt-10"
     >
-      {/* 🔙 Botón volver: Coordenadas idénticas a Aprender.jsx */}
-      <button
-        onClick={() => navigate(-1)}
-        className="absolute top-5 left-6 flex items-center gap-2 text-gray-800 dark:text-gray-100 
-                   hover:text-indigo-400 transition-all duration-300 z-10"
-      >
-        <Undo2 size={24} strokeWidth={2.2} />
-        <span className="hidden sm:inline font-medium">Volver</span>
-      </button>
-
-      {/* 🏷️ Título superior: Coordenadas idénticas a Aprender.jsx */}
-      <h1 className="absolute top-6 right-10 text-xl font-bold z-20">SignAI</h1>
+      <PageHeader />
       
       {/* 🧩 Contenedor de juegos: 
           Restauramos la estructura GRID de Aprender.jsx para una distribución perfecta 

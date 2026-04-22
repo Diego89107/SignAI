@@ -20,7 +20,7 @@ import Quiz from "./components/pages/Juegos/Quiz";
 import Aprender from "./components/pages/Aprender";
 import JuegosInteractivos from "./components/pages/Juegos.jsx";
 import Memorama from "./components/pages/Juegos/Memorama.jsx";
-import Abecedario from "./components/pages/Aprender/Abecedario.jsx";
+import LeccionRoute from "./components/pages/Aprender/LeccionRoute.jsx";
 
 import "./transitions.css";
 
@@ -136,7 +136,7 @@ export default function App() {
                       <Route path="/Deletreo" element={<Deletreo sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />} />
                       <Route path="/Desafio" element={<Desafio sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />} />
                       <Route path="/Camara" element={<Camara sidebarOpen={sidebarOpen} />} />
-                      <Route path="/Abecedario" element={<Abecedario sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />} />
+                      <Route path="/Aprender/:categoria" element={<LeccionRoute sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />} />
                       <Route path="/Memorama" element={<Memorama sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />} />
                       <Route path="/Juegos" element={<JuegosInteractivos sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />} />
                       <Route path="/Aprender" element={<Aprender sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />} />
