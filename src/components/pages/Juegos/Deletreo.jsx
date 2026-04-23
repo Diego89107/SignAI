@@ -79,20 +79,18 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
     if (verificando) return;
 
     if (origen.tipo === "disponibles") {
+      // Guarda anti-duplicado: si la letra ya está en algún slot, no volver a colocarla
+      if (letrasColocadas.some((l) => l && l.id === letra.id)) return;
+
+      const existente = letrasColocadas[slotIndex];
       setLetrasColocadas((prev) => {
         const nuevas = [...prev];
-        const existente = nuevas[slotIndex];
         nuevas[slotIndex] = letra;
-        // Si el slot tenía una letra, la regresamos a disponibles
-        if (existente) {
-          setLetrasDisponibles((d) => {
-            const filtradas = d.filter((l) => l.id !== letra.id);
-            return [...filtradas, existente];
-          });
-        } else {
-          setLetrasDisponibles((d) => d.filter((l) => l.id !== letra.id));
-        }
         return nuevas;
+      });
+      setLetrasDisponibles((d) => {
+        const filtradas = d.filter((l) => l.id !== letra.id);
+        return existente ? [...filtradas, existente] : filtradas;
       });
     } else if (origen.tipo === "slot") {
       if (origen.index === slotIndex) return;
@@ -118,17 +116,20 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
     });
   };
 
-  // Click: colocar en el primer slot vacío
+  // Tap: colocar en el primer slot vacío
   const colocarEnPrimerVacio = (letra) => {
     if (verificando) return;
+    // Guarda anti-duplicado
+    if (letrasColocadas.some((l) => l && l.id === letra.id)) return;
+
+    const slotIndex = letrasColocadas.findIndex((l) => l === null);
+    if (slotIndex === -1) return;
     setLetrasColocadas((prev) => {
-      const slotIndex = prev.findIndex((l) => l === null);
-      if (slotIndex === -1) return prev;
       const nuevas = [...prev];
       nuevas[slotIndex] = letra;
-      setLetrasDisponibles((d) => d.filter((l) => l.id !== letra.id));
       return nuevas;
     });
+    setLetrasDisponibles((d) => d.filter((l) => l.id !== letra.id));
   };
 
   // Detección del drop según la posición del puntero
@@ -146,13 +147,11 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
       }
     }
 
+    // Si se soltó fuera de todos los slots y venía de un slot, regresarla a disponibles
     if (origen.tipo === "slot") {
-      const rect = disponiblesRef.current?.getBoundingClientRect();
-      if (rect && x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
-        devolverADisponibles(origen.index);
-      }
+      devolverADisponibles(origen.index);
     }
-    // Si no se soltó sobre ningún destino, dragSnapToOrigin regresa la carta sola
+    // Si venía de disponibles, dragSnapToOrigin la regresa sola
   };
 
   const haRespondido =
@@ -243,7 +242,7 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
                     onDragEnd={(e, info) =>
                       handleDragEnd(letra, info, { tipo: "disponibles" })
                     }
-                    onClick={() => colocarEnPrimerVacio(letra)}
+                    onTap={() => colocarEnPrimerVacio(letra)}
                     whileHover={{ scale: 1.05, y: -4 }}
                     whileTap={{ scale: 0.95 }}
                     whileDrag={{ scale: 1.1, zIndex: 50 }}
@@ -299,7 +298,7 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
                               onDragEnd={(e, info) =>
                                 handleDragEnd(letra, info, { tipo: "slot", index })
                               }
-                              onClick={() => devolverADisponibles(index)}
+                              onTap={() => devolverADisponibles(index)}
                               whileHover={{ scale: verificando ? 1 : 1.05 }}
                               whileTap={{ scale: verificando ? 1 : 0.95 }}
                               whileDrag={{ scale: 1.1, zIndex: 50 }}
