@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import ast; files = ['comun.py','grabar_estatica.py','grabar_dinamica.py','normalizar.py','entrenar.py','inferencia.py']; [ast.parse\\(open\\(f,encoding='utf-8'\\).read\\(\\)\\) or print\\(f, 'OK'\\) for f in files]\")",
+      "Bash('C:/LSM Traductor/.venv/Scripts/python.exe' -c 'import ast; files = ['\\\\''comun.py'\\\\'','\\\\''grabar_estatica.py'\\\\'','\\\\''grabar_dinamica.py'\\\\'','\\\\''normalizar.py'\\\\'','\\\\''entrenar.py'\\\\'','\\\\''inferencia.py'\\\\''] *)",
+      "Bash(py -c \"import sys; print\\(sys.version\\)\")",
+      "Bash(where python *)",
+      "Bash(py -c ' *)"
+    ]
+  }
+}
