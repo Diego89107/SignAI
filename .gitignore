@@ -5,3 +5,8 @@ win-unpacked/
 .env
 .env.local
 .env.*.local
+Avances/Modelo Transformer/dataset_estatico/
+Avances/Modelo Transformer/dataset_dinamico/
+Avances/Modelo Transformer/dataset_normalizado/
+__pycache__/
+*.pyc
