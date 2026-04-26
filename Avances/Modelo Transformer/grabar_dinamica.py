@@ -1,31 +1,3 @@
-"""
-grabar_dinamica.py
-
-Recorder de senias DINAMICAS para el Modelo Transformer de SignAI.
-
-Arranque (identico a estatica):
-    IDLE -> WAITING_HANDS (verde cuando detecta N mano(s) con confianza estable
-            durante 200ms) -> COUNTDOWN 3-2-1.
-
-Grabacion:
-    FPS fijo a FPS_OBJETIVO. La grabacion se inicia al llegar a 0 del countdown.
-
-Fin automatico:
-    Cuando el movimiento promedio entre frames consecutivos cae por debajo de
-    UMBRAL_MOVIMIENTO y se mantiene asi durante MS_QUIETUD_PARA_FIN (400ms)
-    -> fin. Se recorta el tramo hasta (inicio_quietud + MS_MARGEN_TRIM), para
-    conservar una pose final mantenida sin quedarse con "basura".
-
-Limites:
-    Maximo SEG_MAX_DINAMICO s (safety cap).
-    Minimo SEG_MIN_DINAMICO s (descartada si es mas corta).
-
-Revision antes de guardar:
-    La grabacion queda en "REVIEW" y el usuario decide:
-        S  guardar
-        R  regrabar (volver a IDLE)
-        ESC cancelar
-"""
 from __future__ import annotations
 
 import sys
@@ -45,7 +17,7 @@ from comun import (
 
 ANCHO_CAM = 1280
 ALTO_CAM = 720
-VENTANA = "SignAI - Grabador Dinamico"
+VENTANA = "SignAI"
 
 COLOR_VERDE = (0, 220, 0)
 COLOR_ROJO = (0, 40, 220)
@@ -55,12 +27,12 @@ COLOR_NEGRO = (20, 20, 20)
 COLOR_AZUL = (220, 120, 0)
 
 
-IDLE = "IDLE"
-WAITING_HANDS = "WAITING_HANDS"
-COUNTDOWN = "COUNTDOWN"
-RECORDING = "RECORDING"
-REVIEW = "REVIEW"
-SAVING = "SAVING"
+IDLE = "EN ESPERA"
+WAITING_HANDS = "BUSCANDO MANOS"
+COUNTDOWN = "CUENTA REGRESIVA"
+RECORDING = "GRABANDO"
+REVIEW = "REVISION"
+SAVING = "GUARDANDO"
 
 
 # ============================================================================
@@ -121,17 +93,11 @@ def dibujar_countdown(frame, n):
                 cv2.FONT_HERSHEY_SIMPLEX, 8, COLOR_AMARILLO, 22, cv2.LINE_AA)
 
 
-def dibujar_grabando(frame, n_frames, seg, en_movimiento, ms_quieto):
+def dibujar_grabando(frame, seg):
     h, w, _ = frame.shape
     cv2.rectangle(frame, (0, 80), (w, 150), (0, 0, 100), -1)
-    cv2.putText(frame, f"GRABANDO  {seg:.2f}s  ({n_frames} frames)",
+    cv2.putText(frame, f"GRABANDO  {seg:.2f}s",
                 (30, 115), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
-    if en_movimiento:
-        tag, color = "MOV", COLOR_ROJO
-    else:
-        tag, color = f"QUIETO {ms_quieto}ms", COLOR_AMARILLO
-    cv2.putText(frame, tag, (w - 340, 115),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
 
 
 def dibujar_hud(frame, gesto, num_manos, session_id, guardados, estado, flash):
@@ -141,14 +107,14 @@ def dibujar_hud(frame, gesto, num_manos, session_id, guardados, estado, flash):
                 cv2.FONT_HERSHEY_SIMPLEX, 0.9, COLOR_AMARILLO, 2)
     cv2.putText(frame, f"Manos: {num_manos}   Guardados (sesion): {guardados}",
                 (20, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.6, COLOR_BLANCO, 1)
-    cv2.putText(frame, f"Session: {session_id}", (w - 320, 32),
+    cv2.putText(frame, f"Sesion: {session_id}", (w - 320, 32),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.55, COLOR_BLANCO, 1)
     cv2.putText(frame, f"Estado: {estado}", (w - 320, 60),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, COLOR_VERDE, 1)
 
     cv2.rectangle(frame, (0, h - 40), (w, h), COLOR_NEGRO, -1)
     cv2.putText(frame,
-                "[G] Grabar   [C] Gesto   [M] Manos   [S/R/ESC] En REVIEW   [ESC] Salir",
+                "[G] Grabar   [C] Gesto   [M] Manos   [S/R/ESC] En REVISION   [ESC] Salir",
                 (20, h - 13), cv2.FONT_HERSHEY_SIMPLEX, 0.55, COLOR_BLANCO, 1)
 
     if flash:
@@ -162,7 +128,7 @@ def dibujar_hud(frame, gesto, num_manos, session_id, guardados, estado, flash):
                     cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
 
 
-def dibujar_review(frame, total_frames, dur_ms, dur_trim_ms):
+def dibujar_review(frame, dur_ms, dur_trim_ms):
     h, w, _ = frame.shape
     overlay = frame.copy()
     cv2.rectangle(overlay, (0, 0), (w, h), COLOR_NEGRO, -1)
@@ -171,9 +137,7 @@ def dibujar_review(frame, total_frames, dur_ms, dur_trim_ms):
     cv2.putText(frame, "REVISION",
                 (w // 2 - 130, 180),
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, COLOR_AZUL, 3)
-    cv2.putText(frame, f"Frames: {total_frames}   Duracion cruda: {dur_ms} ms",
-                (60, 280), cv2.FONT_HERSHEY_SIMPLEX, 0.9, COLOR_BLANCO, 2)
-    cv2.putText(frame, f"Duracion tras trim: {dur_trim_ms} ms",
+    cv2.putText(frame, f"Duracion: {dur_trim_ms} ms",
                 (60, 320), cv2.FONT_HERSHEY_SIMPLEX, 0.9, COLOR_BLANCO, 2)
     cv2.putText(frame, "[S] Guardar",
                 (60, 400), cv2.FONT_HERSHEY_SIMPLEX, 0.95, COLOR_VERDE, 2)
@@ -228,7 +192,7 @@ def trim_buffer(buffer_frames_t, quietud_inicio_ms):
     return [fd for fd, t in buffer_frames_t if t <= cutoff]
 
 
-def pedir_gesto(prompt="Nombre del gesto (ej. HOLA, GRACIAS): "):
+def pedir_gesto(prompt="Nombre del gesto (HOLA, GRACIAS, etc): "):
     while True:
         g = input(prompt).strip().upper()
         if g:
@@ -250,7 +214,7 @@ def pedir_num_manos(prompt="Numero de manos para esta senia (1 o 2): "):
 
 def main():
     print("=" * 64)
-    print("SignAI - Grabador de senias DINAMICAS")
+    print("SignAI")
     print("=" * 64)
     gesto = pedir_gesto()
     num_manos = pedir_num_manos()
@@ -412,14 +376,11 @@ def main():
                             buffer_frames_t = []
 
                 if estado == RECORDING:
-                    dibujar_grabando(frame, len(buffer_frames_t),
-                                     dur_actual_ms / 1000.0,
-                                     en_movimiento, ms_quieto)
+                    dibujar_grabando(frame, dur_actual_ms / 1000.0)
 
             elif estado == REVIEW:
                 if review_data is not None:
                     dibujar_review(frame,
-                                   review_data["total_frames"],
                                    review_data["dur_cruda_ms"],
                                    review_data["dur_trim_ms"])
                 else:

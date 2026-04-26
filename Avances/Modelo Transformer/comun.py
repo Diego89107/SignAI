@@ -1,14 +1,3 @@
-"""
-comun.py
-
-Utilidades compartidas por todo el pipeline del Modelo Transformer de SignAI:
-- Constantes de landmarks, dimensiones de features y rutas.
-- Geometria (distancias, angulos articulares, normal de palma).
-- Deteccion de movimiento para el auto-stop del recorder dinamico.
-- Normalizacion y extraccion de features por mano.
-- Manejo de MediaPipe Hands con soporte para world_landmarks.
-- IO de JSON y generacion de session_id.
-"""
 from __future__ import annotations
 
 import json
@@ -63,7 +52,7 @@ INTER_TIP_PAIRS = [
 
 
 # ============================================================================
-# DIMENSIONES DE FEATURES
+# DIMENSIONES
 # ============================================================================
 # Por mano:
 #   63 coords (21 * XYZ)
@@ -205,12 +194,6 @@ def tuplas_de_dicts(lista_dict) -> list[tuple[float, float, float]]:
 
 
 def normalizar_mano(pts) -> list[tuple[float, float, float]]:
-    """
-    Centra en la muneca y escala por dist(wrist, MIDDLE_MCP).
-    Esta escala es estable: no colapsa con el puno cerrado.
-    NO aplica rotacion (se preserva la orientacion como senial).
-    NO aplica mirror (hand_type va como feature).
-    """
     wrist = pts[WRIST]
     mcp9 = pts[MIDDLE_MCP]
     escala = distancia(wrist, mcp9)
@@ -226,10 +209,6 @@ def normalizar_mano(pts) -> list[tuple[float, float, float]]:
 
 
 def features_mano(pts_norm, hand_type: str) -> np.ndarray:
-    """
-    pts_norm: 21 tuplas (x,y,z) ya normalizadas.
-    Devuelve vector np.float32 de FEAT_PER_HAND dims.
-    """
     flat = []
     for p in pts_norm:
         flat.extend([p[0], p[1], p[2]])
@@ -265,7 +244,6 @@ def features_mano(pts_norm, hand_type: str) -> np.ndarray:
 
 
 def vector_mano_ausente(hand_type: str) -> np.ndarray:
-    """Vector de FEAT_PER_HAND dims para cuando esa mano no fue detectada."""
     vec = np.zeros(FEAT_PER_HAND, dtype=np.float32)
     # hand_type se codifica igualmente (por consistencia posicional).
     vec[FEAT_PER_HAND - 2] = 1.0 if hand_type == "Left" else 0.0
@@ -274,10 +252,6 @@ def vector_mano_ausente(hand_type: str) -> np.ndarray:
 
 
 def features_frame(right_pts, left_pts) -> np.ndarray:
-    """
-    right_pts, left_pts: listas de 21 tuplas crudas o None.
-    Devuelve [FEAT_STATIC_PER_FRAME] con Right seguido de Left.
-    """
     if right_pts is not None:
         vec_r = features_mano(normalizar_mano(right_pts), "Right")
     else:
@@ -292,11 +266,6 @@ def features_frame(right_pts, left_pts) -> np.ndarray:
 
 
 def solo_coords_del_frame(features_frame_vec: np.ndarray) -> np.ndarray:
-    """
-    Extrae solo las 63 coords de cada mano de un vector [FEAT_STATIC_PER_FRAME]
-    (usado para derivar velocidad y aceleracion en dinamicas).
-    Devuelve [126] con Right primero, Left despues.
-    """
     coords_r = features_frame_vec[:FEAT_COORDS]
     coords_l = features_frame_vec[FEAT_PER_HAND:FEAT_PER_HAND + FEAT_COORDS]
     return np.concatenate([coords_r, coords_l])
@@ -333,14 +302,6 @@ def crear_hands(num_manos: int, modo_estatico: bool = False):
 
 
 def extraer_manos(results) -> dict:
-    """
-    De un results de MediaPipe devuelve:
-      {
-        "Right": {"image": [21 tuplas], "world": [21 tuplas], "score": float} | None,
-        "Left":  {...} | None
-      }
-    Si no hay world_landmarks, "world" se rellena con "image" como fallback.
-    """
     out = {"Right": None, "Left": None}
     if not results.multi_hand_landmarks or not results.multi_handedness:
         return out

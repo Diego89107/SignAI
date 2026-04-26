@@ -1,28 +1,3 @@
-"""
-grabar_estatica.py
-
-Recorder de senias estaticas para el Modelo Transformer de SignAI.
-
-Cada muestra es una secuencia corta de FRAMES_ESTATICO frames a FPS_OBJETIVO fps
-(la mano se mantiene quieta). Esto reemplaza la captura de un unico frame y da
-robustez frente al jitter natural de MediaPipe.
-
-Maquina de estados:
-    IDLE           -> esperando tecla G
-    WAITING_HANDS  -> rectangulo verde mientras detecta la(s) mano(s) requerida(s)
-                      con confianza >= CONF_VERDE de forma consistente
-    COUNTDOWN      -> cuenta atras 3-2-1 (solo avanza si las manos siguen detectadas)
-    RECORDING      -> captura FRAMES_ESTATICO a FPS_OBJETIVO fps.
-                      Si hay movimiento excesivo entre frames se descarta la toma
-                      (la senia estatica asume quietud).
-    SAVING         -> escribe JSON, muestra flash de confirmacion, vuelve a IDLE
-
-Controles:
-    G     iniciar grabacion
-    C     cambiar gesto actual
-    M     cambiar numero de manos esperadas (1 o 2)
-    ESC   salir (cancela grabacion si esta en curso)
-"""
 from __future__ import annotations
 
 import time
@@ -46,7 +21,7 @@ from comun import (
 
 ANCHO_CAM = 1280
 ALTO_CAM = 720
-VENTANA = "SignAI - Grabador Estatico"
+VENTANA = "SignAI"
 
 COLOR_VERDE = (0, 220, 0)
 COLOR_ROJO = (0, 40, 220)
@@ -59,11 +34,11 @@ COLOR_NEGRO = (20, 20, 20)
 # ESTADOS
 # ============================================================================
 
-IDLE = "IDLE"
-WAITING_HANDS = "WAITING_HANDS"
-COUNTDOWN = "COUNTDOWN"
-RECORDING = "RECORDING"
-SAVING = "SAVING"
+IDLE = "EN ESPERA"
+WAITING_HANDS = "BUSCANDO MANOS"
+COUNTDOWN = "CUENTA REGRESIVA"
+RECORDING = "GRABANDO"
+SAVING = "GUARDANDO"
 
 
 # ============================================================================
@@ -129,7 +104,7 @@ def dibujar_hud(frame, gesto, num_manos, session_id, guardados, estado, flash):
                 cv2.FONT_HERSHEY_SIMPLEX, 0.9, COLOR_AMARILLO, 2)
     cv2.putText(frame, f"Manos: {num_manos}   Guardados (sesion): {guardados}",
                 (20, 60), cv2.FONT_HERSHEY_SIMPLEX, 0.6, COLOR_BLANCO, 1)
-    cv2.putText(frame, f"Session: {session_id}", (w - 320, 32),
+    cv2.putText(frame, f"Sesion: {session_id}", (w - 320, 32),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.55, COLOR_BLANCO, 1)
     cv2.putText(frame, f"Estado: {estado}", (w - 320, 60),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, COLOR_VERDE, 1)
@@ -208,7 +183,7 @@ def extraer_puntos_para_mov(frame_dict):
 # INPUT DE CONSOLA
 # ============================================================================
 
-def pedir_gesto(prompt="Nombre del gesto (ej. A, HOLA): "):
+def pedir_gesto(prompt="Nombre del gesto (A,B,C,D,E): "):
     while True:
         g = input(prompt).strip().upper()
         if g:
