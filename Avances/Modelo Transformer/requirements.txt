@@ -1,13 +1,3 @@
-# Dependencias del Modelo Transformer de SignAI.
-#
-# Para GPU (RTX 4050) instalar PRIMERO torch con CUDA (cu124):
-#     pip install torch --index-url https://download.pytorch.org/whl/cu124
-# y despues:
-#     pip install -r requirements.txt
-#
-# Si solo vas a correr en CPU, basta con:
-#     pip install -r requirements.txt
-
 opencv-python>=4.8,<5
 mediapipe>=0.10.14
 numpy>=1.24,<2.0

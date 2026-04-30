@@ -493,8 +493,6 @@ def _preparar_review(buffer_frames_t, rec_inicio_ms, quietud_inicio_ms):
         return None
     # duracion efectiva estimada por numero de frames
     dur_trim_ms = int(round(len(secuencia) / FPS_OBJETIVO * 1000.0))
-    if dur_trim_ms < SEG_MIN_DINAMICO * 1000:
-        return None
     return {
         "total_frames": len(secuencia),
         "dur_cruda_ms": int(dur_cruda_ms),
