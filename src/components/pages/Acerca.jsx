@@ -1,14 +1,27 @@
 import React from "react";
-import logoClaro from "../../assets/SignAiMesa de trabajo 3.png"; 
-import logoOscuro from "../../assets/SignAiMesa de trabajo 4.png"; 
+import { Mail, Copy, Check, CheckCircle2 } from "lucide-react";
+import logoClaro from "../../assets/SignAiMesa de trabajo 3.png";
+import logoOscuro from "../../assets/SignAiMesa de trabajo 4.png";
 
 export default function Acerca({ sidebarOpen }) {
+  const email = "L23ISC001@ebano.tecnm.mx";
+  const [copied, setCopied] = React.useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("No se pudo copiar el correo", err);
+    }
+  };
+
   return (
     <div
       className="relative isolate flex flex-col items-center justify-center min-h-screen w-full text-center
       text-gray-900 dark:text-gray-100 transition-all duration-700 ease-in-out"
     >
-      {/* 🟢 FONDO MÁGICO: Mantiene el fondo expandido a pantalla completa */}
       <div className="fixed inset-0 bg-gray-50 dark:bg-[#0b0f19] -z-10 transition-colors duration-700 pointer-events-none" />
 
       <div
@@ -62,23 +75,37 @@ export default function Acerca({ sidebarOpen }) {
             </p>
           </div>
 
-          {/* Valores */}
-          <div className="text-left mt-6">
-            <h2 className="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-100">Valores</h2>
-            <ul className="text-gray-600 dark:text-gray-300 leading-relaxed space-y-1">
-              <li>• Inclusión – Igualdad de oportunidades comunicativas</li>
-              <li>• Respeto – Reconocimiento a la cultura e identidad sorda</li>
-              <li>• Innovación – Tecnología para mejorar el aprendizaje</li>
-              <li>• Compromiso social – Impacto académico y comunitario</li>
-              <li>• Calidad educativa – Contenido claro, confiable y accesible</li>
-            </ul>
-          </div>
-
           {/* Contacto */}
-          <div className="mt-8">
-            <span className="text-sm text-gray-700 dark:text-gray-400">
-              📧 Contacto: <span className="font-medium">contacto@signai.mx</span>
-            </span>
+          <div className="mt-10 flex justify-center">
+            <div className="group flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-[#1f2833] bg-gray-50 dark:bg-[#0f131c] px-5 py-3 shadow-sm hover:shadow-md transition-all duration-300">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
+                <Mail className="w-5 h-5" />
+              </div>
+              <div className="flex flex-col text-left">
+                <span className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  Escríbenos
+                </span>
+                <a
+                  href={`mailto:${email}`}
+                  className="text-sm font-medium text-gray-800 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                >
+                  Contacto SignAI
+                </a>
+              </div>
+              <button
+                type="button"
+                onClick={handleCopy}
+                aria-label="Copiar correo"
+                title={copied ? "Copiado" : "Copiar correo"}
+                className="ml-2 inline-flex items-center justify-center w-9 h-9 rounded-lg text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-[#1a1f2b] transition-colors"
+              >
+                {copied ? (
+                  <Check className="w-4 h-4 text-green-500" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
