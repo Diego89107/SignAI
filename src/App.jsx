@@ -126,7 +126,7 @@ export default function App() {
                   <Routes location={location}>
                     
                     <Route element={<MainLayout />}>
-                      <Route path="/" element={<Home sidebarOpen={sidebarOpen} onTutorialChange={setTutorialActivo} />} />
+                      <Route path="/" element={<Home sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} onTutorialChange={setTutorialActivo} />} />
                       <Route path="/Ajustes" element={<Ajustes sidebarOpen={sidebarOpen} />} />
                       <Route path="/Aprendizaje" element={<Aprendizaje sidebarOpen={sidebarOpen} />} />
                       <Route path="/Acerca" element={<Acerca sidebarOpen={sidebarOpen} />} />

@@ -57,6 +57,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           <NavLink
             to="/"
             end
+            data-tutorial="traductor"
             className={({ isActive }) =>
               `${base} ${isActive ? active : isDark ? normalDark : normalLight}`
             }
@@ -71,6 +72,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
           <NavLink
             to="/Ajustes"
+            data-tutorial="ajustes"
             className={({ isActive }) =>
               `${base} ${isActive ? active : isDark ? normalDark : normalLight}`
             }
@@ -85,6 +87,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
           <NavLink
             to="/Aprendizaje"
+            data-tutorial="aprendizaje"
             className={({ isActive }) =>
               `${base} ${isActive ? active : isDark ? normalDark : normalLight}`
             }
@@ -99,6 +102,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
           <NavLink
             to="/Acerca"
+            data-tutorial="acerca"
             className={({ isActive }) =>
               `${base} ${isActive ? active : isDark ? normalDark : normalLight}`
             }
