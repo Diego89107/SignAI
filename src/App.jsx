@@ -24,6 +24,34 @@ import LeccionRoute from "./components/pages/Aprender/LeccionRoute.jsx";
 
 import "./transitions.css";
 
+// Layout A: Páginas Estándar (definido fuera para que React no lo remonte en cada render)
+function MainLayout({ sidebarOpen, tutorialActivo, setSidebarOpen }) {
+  return (
+    <div className="p-6 w-full max-w-7xl mx-auto flex-1 flex flex-col">
+      {!sidebarOpen && !tutorialActivo && (
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="absolute top-4 left-8 z-50 bg-white dark:bg-[#151822] text-gray-800 dark:text-gray-100
+                     shadow-md rounded-md p-2 hover:bg-gray-200 dark:hover:bg-[#1e2230]
+                     transition flex items-center justify-center"
+        >
+          <Menu size={22} strokeWidth={2.2} />
+        </button>
+      )}
+      <Outlet />
+    </div>
+  );
+}
+
+// Layout B: Páginas Limpias
+function CleanLayout() {
+  return (
+    <div className="flex-1 w-full flex flex-col">
+      <Outlet />
+    </div>
+  );
+}
+
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [animating, setAnimating] = useState(false);
@@ -68,34 +96,6 @@ export default function App() {
     }
   };
 
-  // --- 🏗️ DEFINICIÓN DE LAYOUTS ---
-
-  // Layout A: Páginas Estándar
-  const MainLayout = () => (
-    // ⚠️ CAMBIO CLAVE: Se usó flex-1 flex flex-col para heredar la altura perfecta
-    <div className="p-6 w-full max-w-7xl mx-auto flex-1 flex flex-col">
-      {!sidebarOpen && !tutorialActivo && (
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="absolute top-4 left-8 z-50 bg-white dark:bg-[#151822] text-gray-800 dark:text-gray-100
-                     shadow-md rounded-md p-2 hover:bg-gray-200 dark:hover:bg-[#1e2230]
-                     transition flex items-center justify-center"
-        >
-          <Menu size={22} strokeWidth={2.2} />
-        </button>
-      )}
-      <Outlet />
-    </div>
-  );
-
-  // Layout B: Páginas Limpias
-  const CleanLayout = () => (
-    // ⚠️ CAMBIO CLAVE: Se usó flex-1 flex flex-col
-    <div className="flex-1 w-full flex flex-col">
-      <Outlet />
-    </div>
-  );
-
   return (
     <div
       id="app-wrapper"
@@ -125,7 +125,7 @@ export default function App() {
                 <div ref={nodeRef} className="flex-1 flex flex-col w-full">
                   <Routes location={location}>
                     
-                    <Route element={<MainLayout />}>
+                    <Route element={<MainLayout sidebarOpen={sidebarOpen} tutorialActivo={tutorialActivo} setSidebarOpen={setSidebarOpen} />}>
                       <Route path="/" element={<Home sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} onTutorialChange={setTutorialActivo} />} />
                       <Route path="/Ajustes" element={<Ajustes sidebarOpen={sidebarOpen} />} />
                       <Route path="/Aprendizaje" element={<Aprendizaje sidebarOpen={sidebarOpen} />} />

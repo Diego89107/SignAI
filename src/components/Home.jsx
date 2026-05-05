@@ -31,10 +31,30 @@ const tutorialSteps = [
   },
 ];
 
+// Espera a que termine la transición CSS de una propiedad concreta en un elemento.
+// Incluye un timeout de seguridad por si la propiedad no cambia (no se dispara `transitionend`).
+const waitForTransition = (element, propertyName, fallback = 800) =>
+  new Promise((resolve) => {
+    if (!element) return resolve();
+    const handler = (e) => {
+      if (e.target !== element || e.propertyName !== propertyName) return;
+      cleanup();
+    };
+    const cleanup = () => {
+      element.removeEventListener("transitionend", handler);
+      clearTimeout(timeoutId);
+      resolve();
+    };
+    const timeoutId = setTimeout(cleanup, fallback);
+    element.addEventListener("transitionend", handler);
+  });
+
 export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) {
   const navigate = useNavigate();
 
   const botonRef = useRef(null);
+  const cardRef = useRef(null);
+  const spotlightRef = useRef(null);
 
   const [mostrarTutorial, setMostrarTutorial] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
@@ -106,34 +126,49 @@ export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) 
       window.removeEventListener("resize", onResize);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mostrarTutorial, stepIndex, sidebarOpen]);
+  }, [mostrarTutorial, stepIndex]);
 
-  const avanzarPaso = () => {
-    if (stepIndex === 0) {
-      // 1) Oculta tarjeta y "tapa" el spotlight para que toda la pantalla se vea uniforme
-      setAnimarTexto(false);
-      setSpotlightFilled(true);
-      setSidebarOpen?.(true);
-      // 2) Tras la apertura del sidebar, cambia al paso 1 (el spotlight se reposiciona "a ciegas")
-      setTimeout(() => {
-        setStepIndex(1);
-      }, 450);
-      // 3) Una vez ya posicionado en Traductor, revela el spotlight y la nueva tarjeta
-      setTimeout(() => {
-        setSpotlightFilled(false);
-        setAnimarTexto(true);
-      }, 850);
-      return;
-    }
+  const avanzarPaso = async () => {
     if (isLastStep) {
       cerrarTutorial();
       return;
     }
+
+    if (stepIndex === 0) {
+      // 1) Oculta la tarjeta y rellena el spotlight para que la pantalla se vea uniforme
+      setAnimarTexto(false);
+      setSpotlightFilled(true);
+
+      // 2) Espera a que la tarjeta termine de desvanecer antes de abrir el sidebar
+      await waitForTransition(cardRef.current, "opacity");
+
+      // 3) Abre el sidebar
+      setSidebarOpen?.(true);
+
+      // 4) Espera a que el sidebar termine su animación de apertura
+      const sidebarEl = document.querySelector("aside");
+      await waitForTransition(sidebarEl, "transform");
+
+      // 5) Cambia al paso 1 (el spotlight se reposiciona "a ciegas" porque está relleno)
+      setStepIndex(1);
+
+      // 6) Espera a que el spotlight termine de moverse a su nueva posición
+      await waitForTransition(spotlightRef.current, "top");
+
+      // 7) Revela el spotlight y la nueva tarjeta
+      setSpotlightFilled(false);
+      setAnimarTexto(true);
+      return;
+    }
+
+    // Pasos 1+: oculta tarjeta, cambia paso, espera al spotlight, muestra tarjeta
     setAnimarTexto(false);
-    setTimeout(() => {
-      setStepIndex((s) => s + 1);
-      setTimeout(() => setAnimarTexto(true), 200);
-    }, 280);
+    await waitForTransition(cardRef.current, "opacity");
+
+    setStepIndex((s) => s + 1);
+    await waitForTransition(spotlightRef.current, "top");
+
+    setAnimarTexto(true);
   };
 
   const cerrarTutorial = () => {
@@ -197,6 +232,7 @@ export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) 
           >
             {/* SPOTLIGHT */}
             <div
+              ref={spotlightRef}
               style={{
                 position: "absolute",
                 left: spotlight.x,
@@ -222,10 +258,11 @@ export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) 
 
             {/* CAJA DE INSTRUCCIONES FLOTANTE */}
             <div
+              ref={cardRef}
               className={`
                 absolute bg-white dark:bg-[#151822] text-gray-800 dark:text-gray-100 p-6 rounded-2xl shadow-2xl border border-gray-200 dark:border-[#1f2833] w-[90%] max-w-[320px] flex flex-col items-center text-center
-                transition-all duration-300
-                ${animarTexto ? "opacity-100 translate-y-0 scale-100 pointer-events-auto" : "opacity-0 translate-y-4 scale-95 pointer-events-none"}
+                transition-opacity duration-300
+                ${animarTexto ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
               `}
               style={cardStyle}
             >
@@ -257,14 +294,12 @@ export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) 
       <img
         src={manos}
         alt="Manos LSM"
-        className={`
-          w-full object-cover
-          h-[30vh] sm:h-[35vh] lg:h-[40vh]
+        className="
+          h-[30vh] sm:h-[35vh] lg:h-[40vh] w-auto max-w-full
           transition-all duration-700 ease-in-out rounded-2xl shadow-[0_6px_30px_-10px_rgba(0,0,0,0.3)]
           dark:shadow-[0_6px_30px_-10px_rgba(0,0,0,0.6)] border border-gray-200 dark:border-[#1f2833]
           mb-6 sm:mb-8
-          ${sidebarOpen ? "max-w-[500px]" : "max-w-[650px]"}
-        `}
+        "
       />
 
       {/* 3. CONTENEDOR DE TEXTO */}
