@@ -5,6 +5,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 // Componentes Globales
 import Sidebar from "./components/Sidebar";
+import useScrolled from "./hooks/useScrolled";
 
 // Páginas
 import Home from "./components/Home.jsx";
@@ -26,9 +27,12 @@ import "./transitions.css";
 
 // Layout A: Páginas Estándar (definido fuera para que React no lo remonte en cada render)
 function MainLayout({ sidebarOpen, tutorialActivo, setSidebarOpen }) {
+  const scrolled = useScrolled(80);
+  const showMenu = !sidebarOpen && !tutorialActivo;
+
   return (
     <div className="p-6 w-full max-w-7xl mx-auto flex-1 flex flex-col">
-      {!sidebarOpen && !tutorialActivo && (
+      {showMenu && (
         <button
           onClick={() => setSidebarOpen(true)}
           className="absolute top-4 left-8 z-50 bg-white dark:bg-[#151822] text-gray-800 dark:text-gray-100
@@ -38,6 +42,28 @@ function MainLayout({ sidebarOpen, tutorialActivo, setSidebarOpen }) {
           <Menu size={22} strokeWidth={2.2} />
         </button>
       )}
+
+      {/* Barra fija con botón de menú cuando se hace scroll */}
+      {showMenu && (
+        <div
+          className={`fixed top-0 right-0 z-30 flex items-center px-4 sm:px-8 py-3
+            bg-white/80 dark:bg-[#0b0f19]/80 backdrop-blur-md
+            border-b border-gray-200 dark:border-[#1f2833]
+            transition-all duration-500 ease-out
+            ${sidebarOpen ? "left-60" : "left-0"}
+            ${scrolled ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"}`}
+        >
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="bg-white dark:bg-[#151822] text-gray-800 dark:text-gray-100
+                       shadow-md rounded-md p-2 hover:bg-gray-200 dark:hover:bg-[#1e2230]
+                       transition flex items-center justify-center"
+          >
+            <Menu size={22} strokeWidth={2.2} />
+          </button>
+        </div>
+      )}
+
       <Outlet />
     </div>
   );

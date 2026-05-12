@@ -2,6 +2,34 @@ import React from "react";
 import { Mail, Copy, Check, CheckCircle2 } from "lucide-react";
 import logoClaro from "../../assets/SignAiMesa de trabajo 3.png";
 import logoOscuro from "../../assets/SignAiMesa de trabajo 4.png";
+import Tutorial from "../common/Tutorial";
+
+const ACERCA_TUTORIAL_STEPS = [
+  {
+    key: "acerca-intro",
+    title: "Quiénes somos",
+    text: "Aquí conoces la motivación detrás de SignAI y el equipo que trabaja para derribar barreras de comunicación.",
+    placement: "bottom",
+  },
+  {
+    key: "acerca-mision",
+    title: "Misión",
+    text: "Nuestra misión: facilitar el aprendizaje de la LSM con herramientas accesibles e inclusivas.",
+    placement: "bottom",
+  },
+  {
+    key: "acerca-vision",
+    title: "Visión",
+    text: "Nuestra visión a futuro: ser la plataforma de referencia en accesibilidad e innovación para la LSM.",
+    placement: "top",
+  },
+  {
+    key: "acerca-contacto",
+    title: "Contacto",
+    text: "Si tienes dudas, sugerencias o reportes, escríbenos. Puedes copiar el correo con un solo clic.",
+    placement: "top",
+  },
+];
 
 export default function Acerca({ sidebarOpen }) {
   const email = "L23ISC001@ebano.tecnm.mx";
@@ -50,7 +78,7 @@ export default function Acerca({ sidebarOpen }) {
             className="mx-auto mb-6 w-full max-w-xs h-auto hidden dark:block"
           />
 
-          <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+          <p data-tutorial="acerca-intro" className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
             SignAI nace para derribar barreras de comunicación entre personas sordas y oyentes
             mediante tecnología educativa e inteligencia artificial.
             Creemos que aprender la Lengua de Señas Mexicana debe ser un proceso moderno,
@@ -58,7 +86,7 @@ export default function Acerca({ sidebarOpen }) {
           </p>
 
           {/* Misión */}
-          <div className="text-left mt-6">
+          <div data-tutorial="acerca-mision" className="text-left mt-6">
             <h2 className="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-100">Misión</h2>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               Facilitar el aprendizaje de LSM mediante herramientas tecnológicas accesibles e
@@ -67,7 +95,7 @@ export default function Acerca({ sidebarOpen }) {
           </div>
 
           {/* Visión */}
-          <div className="text-left mt-6">
+          <div data-tutorial="acerca-vision" className="text-left mt-6">
             <h2 className="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-100">Visión</h2>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
               Ser la plataforma de referencia en accesibilidad e innovación tecnológica, transformando
@@ -77,7 +105,7 @@ export default function Acerca({ sidebarOpen }) {
 
           {/* Contacto */}
           <div className="mt-10 flex justify-center">
-            <div className="group flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-[#1f2833] bg-gray-50 dark:bg-[#0f131c] px-5 py-3 shadow-sm hover:shadow-md transition-all duration-300">
+            <div data-tutorial="acerca-contacto" className="group flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-[#1f2833] bg-gray-50 dark:bg-[#0f131c] px-5 py-3 shadow-sm hover:shadow-md transition-all duration-300">
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">
                 <Mail className="w-5 h-5" />
               </div>
@@ -109,6 +137,11 @@ export default function Acerca({ sidebarOpen }) {
           </div>
         </div>
       </div>
+
+      <Tutorial
+        steps={ACERCA_TUTORIAL_STEPS}
+        storageKey="tourSignAI_acerca"
+      />
     </div>
   );
 }

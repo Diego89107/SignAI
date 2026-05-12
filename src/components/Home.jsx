@@ -1,38 +1,43 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-import { createPortal } from "react-dom";
+import React from "react";
 import manos from "../assets/hands.jpeg";
 import { useNavigate } from "react-router-dom";
+import Tutorial from "./common/Tutorial";
 
-const tutorialSteps = [
+const HOME_TUTORIAL_STEPS = [
   {
     key: "iniciar",
+    title: "Iniciar traducción",
     text: "Para iniciar la traducción presiona este botón, recuerda hacer las señas correctamente.",
     placement: "top",
+    padding: 10,
+    radius: 16,
   },
   {
     key: "traductor",
+    title: "Traductor",
     text: "En este apartado puedes regresar a la pantalla principal e iniciar la traducción de señas en cualquier momento.",
     placement: "right",
   },
   {
     key: "ajustes",
+    title: "Ajustes",
     text: "En este apartado puedes escoger diferentes voces, color de fondo, cámara y velocidad de voz.",
     placement: "right",
   },
   {
     key: "aprendizaje",
+    title: "Aprendizaje",
     text: "En este apartado puedes acceder a lecciones y juegos interactivos para aprender Lengua de Señas Mexicana.",
     placement: "right",
   },
   {
     key: "acerca",
+    title: "Acerca de nosotros",
     text: "En este apartado puedes conocer al equipo detrás de SignAI y la finalidad del proyecto.",
     placement: "right",
   },
 ];
 
-// Espera a que termine la transición CSS de una propiedad concreta en un elemento.
-// Incluye un timeout de seguridad por si la propiedad no cambia (no se dispara `transitionend`).
 const waitForTransition = (element, propertyName, fallback = 800) =>
   new Promise((resolve) => {
     if (!element) return resolve();
@@ -52,159 +57,14 @@ const waitForTransition = (element, propertyName, fallback = 800) =>
 export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) {
   const navigate = useNavigate();
 
-  const botonRef = useRef(null);
-  const cardRef = useRef(null);
-  const spotlightRef = useRef(null);
-
-  const [mostrarTutorial, setMostrarTutorial] = useState(false);
-  const [stepIndex, setStepIndex] = useState(0);
-  const [spotlight, setSpotlight] = useState({
-    x: 0, y: 0, w: 0, h: 0, cx: 0, cy: 0, radius: 16, maxR: 0,
-  });
-  const [animarAgua, setAnimarAgua] = useState(false);
-  const [animarTexto, setAnimarTexto] = useState(false);
-  // Cuando es true, el "hueco" del spotlight se rellena con el mismo color del overlay
-  // para que toda la pantalla se vea uniforme mientras se reposiciona entre pasos.
-  const [spotlightFilled, setSpotlightFilled] = useState(false);
-
-  const currentStep = tutorialSteps[stepIndex];
-  const isLastStep = stepIndex === tutorialSteps.length - 1;
-
-  const computeSpotlight = () => {
-    let rect;
-    if (stepIndex === 0) {
-      rect = botonRef.current?.getBoundingClientRect();
-    } else {
-      const el = document.querySelector(`[data-tutorial="${currentStep.key}"]`);
-      rect = el?.getBoundingClientRect();
-    }
-    if (!rect || rect.width === 0) return;
-
-    const padding = stepIndex === 0 ? 10 : 6;
-    const radioMaximoPantalla = Math.ceil(
-      Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2)
-    );
-    setSpotlight({
-      x: rect.left - padding,
-      y: rect.top - padding,
-      w: rect.width + 2 * padding,
-      h: rect.height + 2 * padding,
-      cx: rect.left + rect.width / 2,
-      cy: rect.top + rect.height / 2,
-      radius: stepIndex === 0 ? 16 : 12,
-      maxR: radioMaximoPantalla,
-    });
-  };
-
-  useEffect(() => {
-    const tourCompletado = localStorage.getItem("tourSignAICompleted");
-    if (tourCompletado) return;
-
-    setMostrarTutorial(true);
-    onTutorialChange?.(true);
-
-    const tAgua = setTimeout(() => setAnimarAgua(true), 100);
-    const tTexto = setTimeout(() => setAnimarTexto(true), 900);
-
-    return () => {
-      clearTimeout(tAgua);
-      clearTimeout(tTexto);
-    };
-  }, [onTutorialChange]);
-
-  useLayoutEffect(() => {
-    if (!mostrarTutorial) return;
-
-    // Espera breve para que el sidebar termine de animar antes de medir
-    const delay = stepIndex === 0 ? 0 : 60;
-    const t = setTimeout(computeSpotlight, delay);
-
-    const onResize = () => computeSpotlight();
-    window.addEventListener("resize", onResize);
-    return () => {
-      clearTimeout(t);
-      window.removeEventListener("resize", onResize);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mostrarTutorial, stepIndex]);
-
-  const avanzarPaso = async () => {
-    if (isLastStep) {
-      cerrarTutorial();
-      return;
-    }
-
-    if (stepIndex === 0) {
-      // 1) Oculta la tarjeta y rellena el spotlight para que la pantalla se vea uniforme
-      setAnimarTexto(false);
-      setSpotlightFilled(true);
-
-      // 2) Espera a que la tarjeta termine de desvanecer antes de abrir el sidebar
-      await waitForTransition(cardRef.current, "opacity");
-
-      // 3) Abre el sidebar
+  // Abre el sidebar antes de pasar al paso 1 (que apunta a un item del sidebar).
+  const prepareStep = async (from, to) => {
+    if (from === 0 && to === 1 && !sidebarOpen) {
       setSidebarOpen?.(true);
-
-      // 4) Espera a que el sidebar termine su animación de apertura
       const sidebarEl = document.querySelector("aside");
       await waitForTransition(sidebarEl, "transform");
-
-      // 5) Cambia al paso 1 (el spotlight se reposiciona "a ciegas" porque está relleno)
-      setStepIndex(1);
-
-      // 6) Espera a que el spotlight termine de moverse a su nueva posición
-      await waitForTransition(spotlightRef.current, "top");
-
-      // 7) Revela el spotlight y la nueva tarjeta
-      setSpotlightFilled(false);
-      setAnimarTexto(true);
-      return;
     }
-
-    // Pasos 1+: oculta tarjeta, cambia paso, espera al spotlight, muestra tarjeta
-    setAnimarTexto(false);
-    await waitForTransition(cardRef.current, "opacity");
-
-    setStepIndex((s) => s + 1);
-    await waitForTransition(spotlightRef.current, "top");
-
-    setAnimarTexto(true);
   };
-
-  const cerrarTutorial = () => {
-    setAnimarTexto(false);
-    setAnimarAgua(false);
-
-    setTimeout(() => {
-      localStorage.setItem("tourSignAICompleted", "true");
-      setMostrarTutorial(false);
-      onTutorialChange?.(false);
-    }, 1000);
-  };
-
-  const cardStyle = (() => {
-    if (currentStep.placement === "right") {
-      const left = Math.min(
-        spotlight.x + spotlight.w + 24,
-        window.innerWidth - 340
-      );
-      return {
-        top: spotlight.cy,
-        left,
-        transform: "translateY(-50%)",
-      };
-    }
-    return {
-      top: spotlight.y - 200,
-      left: spotlight.cx,
-      transform: "translateX(-50%)",
-    };
-  })();
-
-  const arrowClass =
-    currentStep.placement === "right"
-      ? "absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[12px] border-b-[12px] border-r-[14px] border-transparent border-r-white dark:border-r-[#151822]"
-      : "absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[12px] border-r-[12px] border-t-[14px] border-transparent border-t-white dark:border-t-[#151822]";
 
   return (
     <div
@@ -214,74 +74,6 @@ export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) 
         ${sidebarOpen ? "ml-0" : ""}
       `}
     >
-      {/* OVERLAY DE TUTORIAL (portal: fuera del stacking context para cubrir el sidebar) */}
-      {mostrarTutorial &&
-        createPortal(
-          <div
-            className="fixed inset-0 z-[9999] pointer-events-auto"
-            style={{
-              clipPath: animarAgua
-                ? `circle(${spotlight.maxR}px at 0px 0px)`
-                : `circle(0px at 0px 0px)`,
-              WebkitClipPath: animarAgua
-                ? `circle(${spotlight.maxR}px at 0px 0px)`
-                : `circle(0px at 0px 0px)`,
-              transition:
-                "clip-path 1.2s cubic-bezier(0.25, 1, 0.5, 1), -webkit-clip-path 1.2s cubic-bezier(0.25, 1, 0.5, 1)",
-            }}
-          >
-            {/* SPOTLIGHT */}
-            <div
-              ref={spotlightRef}
-              style={{
-                position: "absolute",
-                left: spotlight.x,
-                top: spotlight.y,
-                width: spotlight.w,
-                height: spotlight.h,
-                borderRadius: spotlight.radius,
-                backgroundColor: spotlightFilled
-                  ? "rgba(79, 70, 229, 0.78)"
-                  : "transparent",
-                boxShadow: "0 0 0 9999px rgba(79, 70, 229, 0.78)",
-                outlineStyle: "solid",
-                outlineWidth: "2px",
-                outlineColor: spotlightFilled
-                  ? "rgba(255,255,255,0)"
-                  : "rgba(255,255,255,0.9)",
-                outlineOffset: "3px",
-                transition:
-                  "left 0.5s cubic-bezier(0.4, 0, 0.2, 1), top 0.5s cubic-bezier(0.4, 0, 0.2, 1), width 0.5s cubic-bezier(0.4, 0, 0.2, 1), height 0.5s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.5s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, outline-color 0.3s ease",
-                pointerEvents: "none",
-              }}
-            />
-
-            {/* CAJA DE INSTRUCCIONES FLOTANTE */}
-            <div
-              ref={cardRef}
-              className={`
-                absolute bg-white dark:bg-[#151822] text-gray-800 dark:text-gray-100 p-6 rounded-2xl shadow-2xl border border-gray-200 dark:border-[#1f2833] w-[90%] max-w-[320px] flex flex-col items-center text-center
-                transition-opacity duration-300
-                ${animarTexto ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
-              `}
-              style={cardStyle}
-            >
-              <p className="font-medium text-sm sm:text-base mb-5 leading-relaxed">
-                {currentStep.text}
-              </p>
-              <button
-                onClick={avanzarPaso}
-                disabled={!animarTexto}
-                className="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white px-8 py-2.5 rounded-xl font-bold shadow-lg hover:shadow-indigo-500/30 transition-all disabled:opacity-60 disabled:cursor-default"
-              >
-                {isLastStep ? "Entendido" : "Continuar"}
-              </button>
-              <div className={arrowClass} />
-            </div>
-          </div>,
-          document.body
-        )}
-
       {/* 🟢 FONDO MÁGICO */}
       <div className="fixed inset-0 bg-[#f9fbf9] dark:bg-[#0b0f19] -z-10 transition-colors duration-700 pointer-events-none" />
 
@@ -327,12 +119,20 @@ export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) 
 
       {/* 4. BOTÓN */}
       <button
-        ref={botonRef}
+        data-tutorial="iniciar"
         onClick={() => navigate("/Camara")}
         className="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white px-10 py-3 rounded-xl shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 font-semibold text-lg tracking-wide"
       >
         Iniciar
       </button>
+
+      <Tutorial
+        steps={HOME_TUTORIAL_STEPS}
+        storageKey="tourSignAICompleted"
+        prepareStep={prepareStep}
+        onStart={() => onTutorialChange?.(true)}
+        onFinish={() => onTutorialChange?.(false)}
+      />
     </div>
   );
 }

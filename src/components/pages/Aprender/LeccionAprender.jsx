@@ -5,6 +5,49 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF, Environment, Center } from "@react-three/drei";
 import useCamera from "../../../hooks/useCamera";
 import PageHeader from "../../common/PageHeader";
+import Tutorial from "../../common/Tutorial";
+
+const LECCION_TUTORIAL_STEPS_INTRO = [
+  {
+    key: "leccion-iniciar",
+    title: "Iniciar Cámara",
+    text: "Pulsa este botón para activar la cámara y empezar a practicar las señas de esta lección.",
+    placement: "top",
+  },
+  {
+    key: "leccion-modelo",
+    title: "Modelo 3D",
+    text: "Aquí puedes ver una vista 3D de la mano. Arrastra para girarla y observar la seña desde cualquier ángulo.",
+    placement: "left",
+  },
+  {
+    key: "leccion-item",
+    title: "Seña a practicar",
+    text: "Esta es la seña que debes imitar. Cuando avances, irán apareciendo las siguientes.",
+    placement: "top",
+  },
+];
+
+const LECCION_TUTORIAL_STEPS_CAMARA = [
+  {
+    key: "leccion-camara-activa",
+    title: "Vista en vivo",
+    text: "Aquí te ves a ti mismo. Realiza la seña frente a la cámara con buena iluminación.",
+    placement: "right",
+  },
+  {
+    key: "leccion-acierto",
+    title: "Confirmar acierto",
+    text: "Cuando completes la seña correctamente, pulsa este botón para avanzar a la siguiente.",
+    placement: "top",
+  },
+  {
+    key: "leccion-detener",
+    title: "Detener",
+    text: "Si quieres pausar la práctica, pulsa aquí para apagar la cámara.",
+    placement: "bottom",
+  },
+];
 
 function ModeloMano({ modeloPath }) {
   const { scene } = useGLTF(modeloPath);
@@ -76,6 +119,7 @@ export default function LeccionAprender({
               <>
                 <video
                   ref={videoRef}
+                  data-tutorial="leccion-camara-activa"
                   autoPlay
                   playsInline
                   muted
@@ -105,6 +149,7 @@ export default function LeccionAprender({
                 </AnimatePresence>
 
                 <button
+                  data-tutorial="leccion-detener"
                   onClick={stopStream}
                   className="absolute top-4 right-4 bg-red-500/90 hover:bg-red-600 text-white px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold backdrop-blur-sm transition z-20 flex items-center gap-2 shadow-lg"
                 >
@@ -118,6 +163,7 @@ export default function LeccionAprender({
                 </div>
 
                 <button
+                  data-tutorial="leccion-acierto"
                   onClick={manejarAcierto}
                   disabled={mostrarExito}
                   className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-full font-bold shadow-lg transition z-20 animate-bounce text-sm"
@@ -161,6 +207,7 @@ export default function LeccionAprender({
                       </motion.div>
                     )}
                     <button
+                      data-tutorial="leccion-iniciar"
                       onClick={startCamera}
                       disabled={loading}
                       className="group flex items-center gap-2 sm:gap-3 bg-indigo-600 hover:bg-indigo-700 text-white px-6 sm:px-10 py-3 sm:py-5 rounded-2xl font-bold text-lg sm:text-xl shadow-xl hover:shadow-indigo-500/40 transition-all transform hover:-translate-y-1 active:scale-95"
@@ -183,7 +230,7 @@ export default function LeccionAprender({
           {/* PANEL DERECHO */}
           <div className="flex-1 min-h-[40vh] lg:min-h-0 flex flex-col gap-4 sm:gap-6">
             {/* 🧊 MODELO 3D */}
-            <div className="flex-1 min-h-0 bg-white dark:bg-[#151822] rounded-3xl shadow-xl border border-gray-200 dark:border-gray-800 relative overflow-hidden flex flex-col">
+            <div data-tutorial="leccion-modelo" className="flex-1 min-h-0 bg-white dark:bg-[#151822] rounded-3xl shadow-xl border border-gray-200 dark:border-gray-800 relative overflow-hidden flex flex-col">
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-50 z-10"></div>
 
               <div className="flex-1 w-full h-full cursor-grab active:cursor-grabbing relative z-0">
@@ -206,7 +253,7 @@ export default function LeccionAprender({
             </div>
 
             {/* 🅰️ ÍTEM ACTUAL */}
-            <div className="flex-none h-32 sm:h-40 bg-white dark:bg-[#151822] rounded-3xl shadow-xl border border-gray-200 dark:border-gray-800 flex items-center justify-center overflow-hidden px-6">
+            <div data-tutorial="leccion-item" className="flex-none h-32 sm:h-40 bg-white dark:bg-[#151822] rounded-3xl shadow-xl border border-gray-200 dark:border-gray-800 flex items-center justify-center overflow-hidden px-6">
               <AnimatePresence mode="wait">
                 <motion.span
                   key={itemActual.id}
@@ -222,6 +269,19 @@ export default function LeccionAprender({
           </div>
         </div>
       </div>
+
+      {!cameraActive && !loading && (
+        <Tutorial
+          steps={LECCION_TUTORIAL_STEPS_INTRO}
+          storageKey="tourSignAI_leccion_intro"
+        />
+      )}
+      {cameraActive && (
+        <Tutorial
+          steps={LECCION_TUTORIAL_STEPS_CAMARA}
+          storageKey="tourSignAI_leccion_camara"
+        />
+      )}
     </div>
   );
 }

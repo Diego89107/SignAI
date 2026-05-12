@@ -3,6 +3,22 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { respuestasIncorrectasQuiz as respuestasIncorrectas } from "../../../data/palabras";
 import PageHeader from "../../common/PageHeader";
+import Tutorial from "../../common/Tutorial";
+
+const QUIZ_TUTORIAL_STEPS = [
+  {
+    key: "quiz-imagen",
+    title: "La seña",
+    text: "Observa con atención la seña mostrada en LSM. Es lo que tienes que identificar.",
+    placement: "right",
+  },
+  {
+    key: "quiz-opciones",
+    title: "Tus opciones",
+    text: "Elige la palabra que corresponde a la seña. Tienes 4 opciones por pregunta y al final verás tu resultado.",
+    placement: "left",
+  },
+];
 
 // Imagenes de preguntas ../../../assets/
 import perroImg from "../../../assets/perro.svg";
@@ -142,8 +158,9 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center justify-center">
             
             {/* IZQUIERDA: IMAGEN */}
-            <motion.div 
+            <motion.div
               key={`img-${preguntaActual}`}
+              data-tutorial="quiz-imagen"
               initial={{ x: -50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ type: "spring", stiffness: 100 }}
@@ -161,7 +178,7 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
             </motion.div>
 
             {/* DERECHA: BOTONES DE RESPUESTA */}
-            <div className="w-full max-w-md flex flex-col gap-4">
+            <div data-tutorial="quiz-opciones" className="w-full max-w-md flex flex-col gap-4">
               
               {/* Textos superiores */}
               <div className="flex flex-col items-center text-center mb-2">
@@ -205,6 +222,10 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
           </div>
         )}
       </div>
+
+      {!juegoTerminado && opciones.length > 0 && (
+        <Tutorial steps={QUIZ_TUTORIAL_STEPS} storageKey="tourSignAI_quiz" />
+      )}
     </div>
   );
 }

@@ -2,6 +2,22 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../../common/PageHeader";
+import Tutorial from "../../common/Tutorial";
+
+const MEMORAMA_TUTORIAL_STEPS = [
+  {
+    key: "memorama-progreso",
+    title: "Tu progreso",
+    text: "Aquí ves cuántos pares llevas, las cartas restantes y la barra que indica qué tanto te falta para completar el juego.",
+    placement: "bottom",
+  },
+  {
+    key: "memorama-tablero",
+    title: "El tablero",
+    text: "Toca una carta para voltearla. Encuentra el par entre la seña en LSM y el objeto que representa.",
+    placement: "top",
+  },
+];
 
 // Asegúrate de que la ruta a tus assets sea correcta
 import dorsoImg from "../../../assets/reverso_carta.svg"; 
@@ -146,7 +162,7 @@ export default function Memorama({ sidebarOpen, setSidebarOpen }) {
         ) : (
           /* 🎮 INTERFAZ NORMAL DEL JUEGO */
           <>
-            <div className="w-full mb-8 text-center flex flex-col items-center">
+            <div data-tutorial="memorama-progreso" className="w-full mb-8 text-center flex flex-col items-center">
               <p className="mt-2 text-sm sm:text-base text-gray-500 dark:text-gray-400 max-w-xl">
                 Encuentra las parejas entre la seña en LSM y el objeto correspondiente. Observa con atención antes de voltear la siguiente carta.
               </p>
@@ -177,7 +193,7 @@ export default function Memorama({ sidebarOpen, setSidebarOpen }) {
             </div>
 
             <div className="w-full relative mt-2">
-              <div className="relative bg-white dark:bg-[#151822] rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
+              <div data-tutorial="memorama-tablero" className="relative bg-white dark:bg-[#151822] rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4 sm:gap-6 mx-auto w-full">
                   {cards.map((card, index) => (
                     <motion.div
@@ -229,6 +245,10 @@ export default function Memorama({ sidebarOpen, setSidebarOpen }) {
           </>
         )}
       </div>
+
+      {!juegoTerminado && cards.length > 0 && (
+        <Tutorial steps={MEMORAMA_TUTORIAL_STEPS} storageKey="tourSignAI_memorama" />
+      )}
     </div>
   );
 }

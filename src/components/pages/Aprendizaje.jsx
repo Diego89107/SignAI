@@ -2,8 +2,24 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageHeader from "../common/PageHeader";
+import Tutorial from "../common/Tutorial";
 import abcImg from "../../assets/abc.svg";
 import juegosImg from "../../assets/juegos.svg";
+
+const APRENDIZAJE_TUTORIAL_STEPS = [
+  {
+    key: "card-aprender",
+    title: "Aprender",
+    text: "Aquí encontrarás lecciones organizadas por categorías para aprender la Lengua de Señas Mexicana desde cero.",
+    placement: "bottom",
+  },
+  {
+    key: "card-juegos",
+    title: "Juegos",
+    text: "Pon a prueba lo aprendido con juegos interactivos: memorama, quiz, desafíos y deletreo.",
+    placement: "bottom",
+  },
+];
 
 export default function Aprendizaje({ sidebarOpen }) {
   const navigate = useNavigate();
@@ -12,6 +28,7 @@ export default function Aprendizaje({ sidebarOpen }) {
     {
       title: "Aprender",
       img: abcImg,
+      tutorialKey: "card-aprender",
       onClick: () => {
         if (typeof sidebarOpen !== "undefined" && sidebarOpen === true && window.closeSidebar) {
           window.closeSidebar();
@@ -22,6 +39,7 @@ export default function Aprendizaje({ sidebarOpen }) {
     {
       title: "Juegos",
       img: juegosImg,
+      tutorialKey: "card-juegos",
       onClick: () => {
         if (typeof sidebarOpen !== "undefined" && sidebarOpen === true && window.closeSidebar) {
           window.closeSidebar();
@@ -42,6 +60,7 @@ export default function Aprendizaje({ sidebarOpen }) {
         {cards.map((card, index) => (
           <motion.div
             key={index}
+            data-tutorial={card.tutorialKey}
             onClick={card.onClick}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
@@ -58,6 +77,11 @@ export default function Aprendizaje({ sidebarOpen }) {
           </motion.div>
         ))}
       </div>
+
+      <Tutorial
+        steps={APRENDIZAJE_TUTORIAL_STEPS}
+        storageKey="tourSignAI_aprendizaje"
+      />
     </div>
   );
 }

@@ -1,6 +1,40 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Sun, Moon, AudioLines, Speech, Camera, Mic2, Volume2, ChevronDown, MonitorSpeaker, Cloud, Check, User, UserRound } from "lucide-react";
 import useSpeech, { hasElevenKey } from "../../hooks/useSpeech";
+import Tutorial from "../common/Tutorial";
+
+const AJUSTES_TUTORIAL_STEPS = [
+  {
+    key: "ajustes-tema",
+    title: "Tema",
+    text: "Aquí puedes alternar entre modo claro y modo oscuro según tu preferencia visual.",
+    placement: "bottom",
+  },
+  {
+    key: "ajustes-motor-voz",
+    title: "Motor de voz",
+    text: "Elige entre la voz nativa del sistema (offline) o ElevenLabs (IA en la nube con mayor calidad).",
+    placement: "bottom",
+  },
+  {
+    key: "ajustes-velocidad",
+    title: "Velocidad de la voz",
+    text: "Ajusta qué tan rápido o lento se reproduce la voz al traducir las señas.",
+    placement: "bottom",
+  },
+  {
+    key: "ajustes-probar",
+    title: "Probar voz",
+    text: "Pulsa este botón para escuchar una muestra de la voz seleccionada.",
+    placement: "top",
+  },
+  {
+    key: "ajustes-camara",
+    title: "Cámara",
+    text: "Selecciona qué cámara usar para captar tus señas si tienes más de una disponible.",
+    placement: "top",
+  },
+];
 
 const ELEVEN_VOICES = [
   { id: "6BEk9bRlUBhlAoIbhBYK", name: "Arturo", gender: "Masculina", origin: "es" },
@@ -177,7 +211,7 @@ export default function Ajustes({ sidebarOpen }) {
         <h2 className="text-3xl font-extrabold mb-8 text-center">Ajustes</h2>
 
         {/* ====== Tema ====== */}
-        <section className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700">
+        <section data-tutorial="ajustes-tema" className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700">
           <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
             <Sun className="text-yellow-400" /> Tema
           </h3>
@@ -208,7 +242,7 @@ export default function Ajustes({ sidebarOpen }) {
         </section>
 
         {/* ====== Motor de voz ====== */}
-        <section className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700">
+        <section data-tutorial="ajustes-motor-voz" className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700">
           <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
             <Mic2 className="text-indigo-600 dark:text-indigo-400" />
             Motor de voz
@@ -231,7 +265,7 @@ export default function Ajustes({ sidebarOpen }) {
         )}
 
         {/* ====== Velocidad ====== */}
-        <section className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700">
+        <section data-tutorial="ajustes-velocidad" className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700">
           <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
             <AudioLines className="text-indigo-600 dark:text-indigo-400" />
             Velocidad de la voz
@@ -297,7 +331,7 @@ export default function Ajustes({ sidebarOpen }) {
         )}
 
         {/* ====== Probar voz ====== */}
-        <section className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700 flex justify-center">
+        <section data-tutorial="ajustes-probar" className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700 flex justify-center">
           <button
             onClick={() =>
               speaking ? stop() : speak("Hola, soy SignAI. Esta es tu voz seleccionada.")
@@ -313,7 +347,7 @@ export default function Ajustes({ sidebarOpen }) {
         </section>
 
         {/* ====== Cámara ====== */}
-        <section className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 transition-all duration-700">
+        <section data-tutorial="ajustes-camara" className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 transition-all duration-700">
           <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
             <Camera className="text-indigo-600 dark:text-indigo-400" />
             Cámara
@@ -336,6 +370,11 @@ export default function Ajustes({ sidebarOpen }) {
           )}
         </section>
       </div>
+
+      <Tutorial
+        steps={AJUSTES_TUTORIAL_STEPS}
+        storageKey="tourSignAI_ajustes"
+      />
     </div>
   );
 }

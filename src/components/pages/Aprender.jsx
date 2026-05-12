@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageHeader from "../common/PageHeader";
+import Tutorial from "../common/Tutorial";
 
 import abcImg from "../../assets/Juegoabc.svg";
 import numerosImg from "../../assets/numeros.svg";
@@ -12,6 +13,21 @@ import diasImg from "../../assets/tiempo.svg";
 import comidaImg from "../../assets/comida.svg";
 import lugaresImg from "../../assets/lugares.svg";
 import transporteImg from "../../assets/transporte.svg";
+
+const APRENDER_TUTORIAL_STEPS = [
+  {
+    key: "aprender-primera",
+    title: "Elige una categoría",
+    text: "Cada tarjeta abre una lección con las señas de esa categoría. Te recomendamos empezar por el abecedario.",
+    placement: "bottom",
+  },
+  {
+    key: "aprender-cuadricula",
+    title: "Explora todas las categorías",
+    text: "Aquí están todas las lecciones disponibles: números, colores, saludos, comida, lugares y más. Avanza a tu propio ritmo.",
+    placement: "top",
+  },
+];
 
 export default function Aprender({ sidebarOpen }) {
   const navigate = useNavigate();
@@ -38,6 +54,7 @@ export default function Aprender({ sidebarOpen }) {
 
       {/* 🧩 Contenedor de categorías */}
       <motion.div
+        data-tutorial="aprender-cuadricula"
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -46,11 +63,12 @@ export default function Aprender({ sidebarOpen }) {
         {categorias.map((cat, index) => (
           <motion.div
             key={index}
+            data-tutorial={index === 0 ? "aprender-primera" : undefined}
             onClick={() => navigate(`/Aprender/${cat.slug}`)}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
-            className="cursor-pointer bg-white dark:bg-[#151822] rounded-2xl shadow-lg hover:shadow-indigo-400/20 
-                       p-6 w-64 h-64 flex flex-col items-center justify-center 
+            className="cursor-pointer bg-white dark:bg-[#151822] rounded-2xl shadow-lg hover:shadow-indigo-400/20
+                       p-6 w-64 h-64 flex flex-col items-center justify-center
                        transition-all duration-500 ease-in-out mx-auto"
           >
             <img
@@ -62,6 +80,11 @@ export default function Aprender({ sidebarOpen }) {
           </motion.div>
         ))}
       </motion.div>
+
+      <Tutorial
+        steps={APRENDER_TUTORIAL_STEPS}
+        storageKey="tourSignAI_aprender"
+      />
     </div>
   );
 }

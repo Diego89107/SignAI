@@ -5,6 +5,37 @@ import { useNavigate } from "react-router-dom";
 import useCamera from "../../../hooks/useCamera";
 import { palabrasDesafio as listaDesafio } from "../../../data/palabras";
 import PageHeader from "../../common/PageHeader";
+import Tutorial from "../../common/Tutorial";
+
+const DESAFIO_TUTORIAL_STEPS_INTRO = [
+  {
+    key: "desafio-iniciar",
+    title: "Iniciar Reto",
+    text: "Pulsa este botón para activar la cámara y empezar el desafío contrarreloj.",
+    placement: "top",
+  },
+];
+
+const DESAFIO_TUTORIAL_STEPS_JUEGO = [
+  {
+    key: "desafio-temporizador",
+    title: "Tiempo",
+    text: "Tienes 20 segundos por seña. Si el reloj llega a cero, pierdes el desafío.",
+    placement: "bottom",
+  },
+  {
+    key: "desafio-aciertos",
+    title: "Aciertos",
+    text: "Aquí se cuentan tus aciertos consecutivos. Acumula los máximos posibles.",
+    placement: "bottom",
+  },
+  {
+    key: "desafio-palabra",
+    title: "Seña objetivo",
+    text: "Esta es la palabra que debes representar con tus manos frente a la cámara.",
+    placement: "top",
+  },
+];
 
 export default function Desafio({ sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
@@ -117,14 +148,14 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
             
             {/* HEADER: Temporizador y Puntaje */}
             <div className="flex-none w-full flex justify-between items-end px-2">
-              <div className="flex flex-col">
+              <div data-tutorial="desafio-temporizador" className="flex flex-col">
                 <span className="text-xs sm:text-sm font-bold tracking-widest text-gray-400 uppercase">Tiempo</span>
                 <div className={`flex items-center gap-1.5 text-3xl sm:text-4xl font-black ${tiempoRestante <= 5 ? 'text-red-500 animate-pulse' : 'text-gray-800 dark:text-white'}`}>
                   <Timer size={28} />
                   0:{tiempoRestante.toString().padStart(2, '0')}
                 </div>
               </div>
-              <div className="text-right">
+              <div data-tutorial="desafio-aciertos" className="text-right">
                 <span className="text-xs sm:text-sm font-bold tracking-widest text-gray-400 uppercase">Aciertos</span>
                 <div className="text-3xl sm:text-4xl font-black text-indigo-600 leading-none">{puntaje}</div>
               </div>
@@ -186,6 +217,7 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
                       </p>
                       {errorMsg && <p className="text-red-500 text-sm mb-3">{errorMsg}</p>}
                       <button
+                        data-tutorial="desafio-iniciar"
                         onClick={startCamera}
                         disabled={loading}
                         className="group flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold text-lg shadow-lg hover:shadow-indigo-500/40 transition-all transform hover:-translate-y-1 active:scale-95"
@@ -200,7 +232,7 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
 
             {/* CAJA DE LA PALABRA OBJETIVO */}
             {/* ⚠️ Compactada para que no robe espacio a la cámara */}
-            <div className="flex-none w-full bg-white dark:bg-[#151822] rounded-3xl shadow-lg border border-gray-200 dark:border-gray-800 py-3 flex flex-col items-center justify-center text-center">
+            <div data-tutorial="desafio-palabra" className="flex-none w-full bg-white dark:bg-[#151822] rounded-3xl shadow-lg border border-gray-200 dark:border-gray-800 py-3 flex flex-col items-center justify-center text-center">
               <span className="text-xs font-bold tracking-widest text-indigo-500 uppercase mb-0.5">Haz la seña para:</span>
               <AnimatePresence mode="wait">
                 <motion.h2 
@@ -216,6 +248,13 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
           </div>
         )}
       </div>
+
+      {!juegoIniciado && estadoRonda === "esperando" && !loading && !cameraActive && (
+        <Tutorial steps={DESAFIO_TUTORIAL_STEPS_INTRO} storageKey="tourSignAI_desafio_intro" />
+      )}
+      {juegoIniciado && estadoRonda === "jugando" && (
+        <Tutorial steps={DESAFIO_TUTORIAL_STEPS_JUEGO} storageKey="tourSignAI_desafio_juego" />
+      )}
     </div>
   );
 }

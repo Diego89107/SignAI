@@ -3,6 +3,28 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { palabrasDeletreo as listaPalabras } from "../../../data/palabras";
 import PageHeader from "../../common/PageHeader";
+import Tutorial from "../../common/Tutorial";
+
+const DELETREO_TUTORIAL_STEPS = [
+  {
+    key: "deletreo-progreso",
+    title: "Tu progreso",
+    text: "Aquí se muestra el nivel actual, tus aciertos acumulados y la barra de avance del juego.",
+    placement: "bottom",
+  },
+  {
+    key: "deletreo-disponibles",
+    title: "Letras disponibles",
+    text: "Estas son las señas que debes ordenar. Arrástralas o tócalas para colocarlas.",
+    placement: "bottom",
+  },
+  {
+    key: "deletreo-slots",
+    title: "Forma la palabra",
+    text: "Coloca cada seña en su espacio para formar la palabra correcta. Si te equivocas, puedes regresar la letra arriba.",
+    placement: "top",
+  },
+];
 
 // ⚠️ Placeholder temporal: todas las letras usan la misma imagen hasta que se agreguen assets reales
 import imgPlaceholder from "../../../assets/elefante_lsm.svg";
@@ -171,7 +193,7 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
 
       <div className="z-10 w-full max-w-5xl px-6 flex flex-col items-stretch">
         {/* Encabezado */}
-        <div className="w-full mb-4 text-center flex flex-col items-center">
+        <div data-tutorial="deletreo-progreso" className="w-full mb-4 text-center flex flex-col items-center">
           <p className="mt-2 text-sm sm:text-base text-gray-500 dark:text-gray-400 max-w-xl">
             Arrastra las señas a los espacios para formar la palabra correcta. Puedes moverlas entre huecos o regresarlas arriba si te equivocas.
           </p>
@@ -225,6 +247,7 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
             {/* ZONA DISPONIBLES */}
             <div
               ref={disponiblesRef}
+              data-tutorial="deletreo-disponibles"
               className="min-h-[180px] w-full flex flex-wrap justify-center items-center gap-4 mb-6 rounded-3xl bg-white dark:bg-[#151822] border border-gray-200 dark:border-gray-800 shadow-xl p-8"
             >
               <AnimatePresence>
@@ -261,7 +284,7 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
 
             {/* ZONA SLOTS */}
             <div className="w-full relative mt-2 flex-1 flex flex-col items-center justify-start">
-              <div className="relative w-full bg-white dark:bg-[#151822] rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-800 min-h-[220px] p-8 flex flex-col items-center justify-center">
+              <div data-tutorial="deletreo-slots" className="relative w-full bg-white dark:bg-[#151822] rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-800 min-h-[220px] p-8 flex flex-col items-center justify-center">
                 <div className="flex flex-wrap justify-center gap-4 z-10 relative">
                   {Array.from({ length: palabraObjetivo.length }).map((_, index) => {
                     const letra = letrasColocadas[index];
@@ -353,6 +376,10 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
           </React.Fragment>
         )}
       </div>
+
+      {!juegoTerminado && letrasDisponibles.length > 0 && (
+        <Tutorial steps={DELETREO_TUTORIAL_STEPS} storageKey="tourSignAI_deletreo" />
+      )}
     </div>
   );
 }
