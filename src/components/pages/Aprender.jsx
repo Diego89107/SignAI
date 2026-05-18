@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageHeader from "../common/PageHeader";
 import Tutorial from "../common/Tutorial";
+import PageLayout from "../common/PageLayout";
+import ResponsiveContainer from "../common/ResponsiveContainer";
+import NavCard from "../common/NavCard";
 
 import abcImg from "../../assets/Juegoabc.svg";
 import numerosImg from "../../assets/numeros.svg";
@@ -45,46 +48,35 @@ export default function Aprender({ sidebarOpen }) {
   ];
 
   return (
-    <div
-      className={`min-h-screen w-full flex flex-col items-center justify-start text-center 
-      bg-gray-50 dark:bg-[#0b0f19] text-gray-900 dark:text-gray-100 
-      transition-all duration-700 ease-in-out pt-10`}
+    <PageLayout
+      contentClassName="min-h-screen items-center justify-start text-center text-gray-900 dark:text-gray-100 transition-colors duration-700 ease-in-out pt-10"
     >
       <PageHeader />
 
-      {/* 🧩 Contenedor de categorías */}
-      <motion.div
-        data-tutorial="aprender-cuadricula"
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-16 px-6"
-      >
-        {categorias.map((cat, index) => (
-          <motion.div
-            key={index}
-            data-tutorial={index === 0 ? "aprender-primera" : undefined}
-            onClick={() => navigate(`/Aprender/${cat.slug}`)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            className="cursor-pointer bg-white dark:bg-[#151822] rounded-2xl shadow-lg hover:shadow-indigo-400/20
-                       p-6 w-64 h-64 flex flex-col items-center justify-center
-                       transition-all duration-500 ease-in-out mx-auto"
-          >
-            <img
-              src={cat.img}
-              alt={cat.title}
-              className="w-28 h-28 object-contain mb-4 drop-shadow-md"
+      <ResponsiveContainer size="xl">
+        <motion.div
+          data-tutorial="aprender-cuadricula"
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 2xl:gap-14 mt-10 sm:mt-12 lg:mt-16 2xl:mt-20"
+        >
+          {categorias.map((cat, index) => (
+            <NavCard
+              key={index}
+              title={cat.title}
+              img={cat.img}
+              tutorialKey={index === 0 ? "aprender-primera" : undefined}
+              onClick={() => navigate(`/Aprender/${cat.slug}`)}
             />
-            <h3 className="text-lg font-semibold">{cat.title}</h3>
-          </motion.div>
-        ))}
-      </motion.div>
+          ))}
+        </motion.div>
+      </ResponsiveContainer>
 
       <Tutorial
         steps={APRENDER_TUTORIAL_STEPS}
         storageKey="tourSignAI_aprender"
       />
-    </div>
+    </PageLayout>
   );
 }

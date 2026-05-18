@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { Sun, Moon, AudioLines, Speech, Camera, Mic2, Volume2, ChevronDown, MonitorSpeaker, Cloud, Check, User, UserRound } from "lucide-react";
 import useSpeech, { hasElevenKey } from "../../hooks/useSpeech";
 import Tutorial from "../common/Tutorial";
+import PageLayout from "../common/PageLayout";
+import ResponsiveContainer from "../common/ResponsiveContainer";
+import ContentCard from "../common/ContentCard";
 
 const AJUSTES_TUTORIAL_STEPS = [
   {
@@ -200,26 +203,25 @@ export default function Ajustes({ sidebarOpen }) {
   const vocesEs = voices.filter((v) => v.lang.toLowerCase().startsWith("es"));
 
   return (
-    <div className="relative isolate flex flex-col items-center justify-center min-h-screen w-full p-10 text-gray-900 dark:text-gray-100 transition-all duration-700 ease-in-out">
-      <div className="fixed inset-0 bg-gray-50 dark:bg-[#0b0f19] -z-10 transition-colors duration-700 pointer-events-none" />
+    <PageLayout contentClassName="items-center justify-center min-h-screen py-6 sm:py-10 2xl:py-14 text-gray-900 dark:text-gray-100 transition-all duration-700 ease-in-out">
 
-      <div
+      <ResponsiveContainer
+        size={sidebarOpen ? "md" : "lg"}
         className={`transition-all duration-700 ease-in-out ${
-          sidebarOpen ? "max-w-3xl scale-[0.98]" : "max-w-5xl scale-100"
-        } w-full`}
+          sidebarOpen ? "scale-[0.98]" : "scale-100"
+        }`}
       >
-        <h2 className="text-3xl font-extrabold mb-8 text-center">Ajustes</h2>
+        <h2 className="text-2xl sm:text-3xl 2xl:text-4xl font-extrabold mb-6 sm:mb-8 2xl:mb-10 text-center">Ajustes</h2>
 
-        {/* ====== Tema ====== */}
-        <section data-tutorial="ajustes-tema" className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700">
-          <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
+        <ContentCard as="section" data-tutorial="ajustes-tema" className="mb-4 sm:mb-6 2xl:mb-8 transition-all duration-700">
+          <h3 className="text-base sm:text-lg 2xl:text-xl font-semibold flex items-center gap-2 mb-3 sm:mb-4">
             <Sun className="text-yellow-400" /> Tema
           </h3>
 
-          <div className="flex gap-4 justify-start">
+          <div className="flex gap-3 sm:gap-4 justify-start flex-wrap">
             <button
               onClick={() => setTheme("light")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+              className={`flex items-center gap-2 px-3 sm:px-4 2xl:px-5 py-1.5 sm:py-2 2xl:py-2.5 rounded-lg text-sm sm:text-base 2xl:text-lg transition-all duration-300 ${
                 !isDark
                   ? "bg-indigo-100 text-indigo-700 font-medium shadow-sm"
                   : "bg-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1f1f1f]"
@@ -230,7 +232,7 @@ export default function Ajustes({ sidebarOpen }) {
 
             <button
               onClick={() => setTheme("dark")}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+              className={`flex items-center gap-2 px-3 sm:px-4 2xl:px-5 py-1.5 sm:py-2 2xl:py-2.5 rounded-lg text-sm sm:text-base 2xl:text-lg transition-all duration-300 ${
                 isDark
                   ? "bg-indigo-100 text-indigo-700 font-medium shadow-sm"
                   : "bg-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1f1f1f]"
@@ -239,11 +241,10 @@ export default function Ajustes({ sidebarOpen }) {
               <Moon size={18} /> Modo oscuro
             </button>
           </div>
-        </section>
+        </ContentCard>
 
-        {/* ====== Motor de voz ====== */}
-        <section data-tutorial="ajustes-motor-voz" className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700">
-          <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
+        <ContentCard as="section" data-tutorial="ajustes-motor-voz" className="mb-4 sm:mb-6 2xl:mb-8 transition-all duration-700">
+          <h3 className="text-base sm:text-lg 2xl:text-xl font-semibold flex items-center gap-2 mb-3">
             <Mic2 className="text-indigo-600 dark:text-indigo-400" />
             Motor de voz
           </h3>
@@ -252,21 +253,19 @@ export default function Ajustes({ sidebarOpen }) {
             options={PROVIDER_OPTIONS}
             onChange={(id) => update({ provider: id })}
           />
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-xs 2xl:text-sm text-gray-500 dark:text-gray-400 mt-2">
             Web Speech funciona offline y usa las voces instaladas en tu sistema. ElevenLabs usa voces de IA en la nube con mayor calidad.
           </p>
-        </section>
+        </ContentCard>
 
-        {/* ====== Aviso de API key ElevenLabs ====== */}
         {elevenKeyMissing && (
-          <section className="bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700/60 rounded-xl p-4 mb-6 text-sm text-amber-800 dark:text-amber-200">
+          <section className="bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700/60 rounded-xl p-4 2xl:p-6 mb-4 sm:mb-6 2xl:mb-8 text-sm 2xl:text-base text-amber-800 dark:text-amber-200">
             ⚠️ No se encontró la API key de ElevenLabs. Define <code className="font-mono">VITE_ELEVEN_API_KEY</code> en tu archivo <code className="font-mono">.env</code> para usar este motor.
           </section>
         )}
 
-        {/* ====== Velocidad ====== */}
-        <section data-tutorial="ajustes-velocidad" className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700">
-          <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
+        <ContentCard as="section" data-tutorial="ajustes-velocidad" className="mb-4 sm:mb-6 2xl:mb-8 transition-all duration-700">
+          <h3 className="text-base sm:text-lg 2xl:text-xl font-semibold flex items-center gap-2 mb-3">
             <AudioLines className="text-indigo-600 dark:text-indigo-400" />
             Velocidad de la voz
           </h3>
@@ -281,15 +280,14 @@ export default function Ajustes({ sidebarOpen }) {
             aria-valuetext={`${settings.rate.toFixed(1)} veces`}
             className="w-full accent-indigo-600"
           />
-          <p className="text-center mt-2 text-sm text-gray-600 dark:text-gray-300">
+          <p className="text-center mt-2 text-sm 2xl:text-base text-gray-600 dark:text-gray-300">
             {settings.rate.toFixed(1)}x
           </p>
-        </section>
+        </ContentCard>
 
-        {/* ====== Tipo de voz ====== */}
         {settings.provider === "webspeech" && (
-          <section className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700">
-            <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
+          <ContentCard as="section" className="mb-4 sm:mb-6 2xl:mb-8 transition-all duration-700">
+            <h3 className="text-base sm:text-lg 2xl:text-xl font-semibold flex items-center gap-2 mb-3">
               <Volume2 className="text-indigo-600 dark:text-indigo-400" />
               Tipo de voz
             </h3>
@@ -308,17 +306,16 @@ export default function Ajustes({ sidebarOpen }) {
                 ]}
               />
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm 2xl:text-base text-gray-500 dark:text-gray-400">
                 Cargando voces disponibles…
               </p>
             )}
-          </section>
+          </ContentCard>
         )}
 
-        {/* ====== Tipo de voz ElevenLabs ====== */}
         {settings.provider === "elevenlabs" && (
-          <section className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700">
-            <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
+          <ContentCard as="section" className="mb-4 sm:mb-6 2xl:mb-8 transition-all duration-700">
+            <h3 className="text-base sm:text-lg 2xl:text-xl font-semibold flex items-center gap-2 mb-3">
               <Speech className="text-indigo-600 dark:text-indigo-400" />
               Tipo de voz
             </h3>
@@ -327,16 +324,15 @@ export default function Ajustes({ sidebarOpen }) {
               options={ELEVEN_OPTIONS}
               onChange={(id) => update({ elevenVoiceId: id, elevenModel: "eleven_multilingual_v2" })}
             />
-          </section>
+          </ContentCard>
         )}
 
-        {/* ====== Probar voz ====== */}
-        <section data-tutorial="ajustes-probar" className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 mb-6 transition-all duration-700 flex justify-center">
+        <ContentCard as="section" data-tutorial="ajustes-probar" className="mb-4 sm:mb-6 2xl:mb-8 transition-all duration-700 flex justify-center">
           <button
             onClick={() =>
               speaking ? stop() : speak("Hola, soy SignAI. Esta es tu voz seleccionada.")
             }
-            className={`px-6 py-2.5 rounded-xl font-semibold shadow-lg transition-all active:scale-95 text-white ${
+            className={`px-5 sm:px-6 2xl:px-8 py-2 sm:py-2.5 2xl:py-3 rounded-xl font-semibold text-sm sm:text-base 2xl:text-lg shadow-lg transition-all active:scale-95 text-white ${
               speaking
                 ? "bg-rose-600 hover:bg-rose-700 animate-pulse"
                 : "bg-indigo-600 hover:bg-indigo-700"
@@ -344,11 +340,10 @@ export default function Ajustes({ sidebarOpen }) {
           >
             {speaking ? "⏹ Detener" : "🔊 Probar voz"}
           </button>
-        </section>
+        </ContentCard>
 
-        {/* ====== Cámara ====== */}
-        <section data-tutorial="ajustes-camara" className="bg-white dark:bg-[#151822] border border-gray-200 dark:border-[#1f2833] rounded-xl shadow-md p-6 transition-all duration-700">
-          <h3 className="text-lg font-semibold flex items-center gap-2 mb-3">
+        <ContentCard as="section" data-tutorial="ajustes-camara" className="transition-all duration-700">
+          <h3 className="text-base sm:text-lg 2xl:text-xl font-semibold flex items-center gap-2 mb-3">
             <Camera className="text-indigo-600 dark:text-indigo-400" />
             Cámara
           </h3>
@@ -364,17 +359,17 @@ export default function Ajustes({ sidebarOpen }) {
               }))}
             />
           ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm 2xl:text-base text-gray-500 dark:text-gray-400">
               No se detectaron cámaras o no se otorgaron permisos.
             </p>
           )}
-        </section>
-      </div>
+        </ContentCard>
+      </ResponsiveContainer>
 
       <Tutorial
         steps={AJUSTES_TUTORIAL_STEPS}
         storageKey="tourSignAI_ajustes"
       />
-    </div>
+    </PageLayout>
   );
 }

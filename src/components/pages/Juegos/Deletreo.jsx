@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { palabrasDeletreo as listaPalabras } from "../../../data/palabras";
 import PageHeader from "../../common/PageHeader";
 import Tutorial from "../../common/Tutorial";
+import PageLayout from "../../common/PageLayout";
 
 const DELETREO_TUTORIAL_STEPS = [
   {
@@ -188,10 +189,13 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
   );
 
   return (
-    <div className="relative isolate h-full w-full bg-gray-50 dark:bg-[#0b0f19] text-gray-900 dark:text-gray-100 flex flex-col items-center pt-14 pb-4 overflow-hidden px-4 sm:px-6 lg:px-8">
+    <PageLayout
+      className="h-full overflow-hidden"
+      contentClassName="items-center pt-14 pb-4 px-4 sm:px-6 lg:px-8 text-gray-900 dark:text-gray-100"
+    >
       <PageHeader />
 
-      <div className="z-10 w-full max-w-5xl px-6 flex flex-col items-stretch">
+      <div className="z-10 w-full max-w-5xl 2xl:max-w-[1400px] px-4 sm:px-6 2xl:px-10 flex flex-col items-stretch">
         {/* Encabezado */}
         <div data-tutorial="deletreo-progreso" className="w-full mb-4 text-center flex flex-col items-center">
           <p className="mt-2 text-sm sm:text-base text-gray-500 dark:text-gray-400 max-w-xl">
@@ -248,7 +252,7 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
             <div
               ref={disponiblesRef}
               data-tutorial="deletreo-disponibles"
-              className="min-h-[180px] w-full flex flex-wrap justify-center items-center gap-4 mb-6 rounded-3xl bg-white dark:bg-[#151822] border border-gray-200 dark:border-gray-800 shadow-xl p-8"
+              className="min-h-[180px] 2xl:min-h-[220px] w-full flex flex-wrap justify-center items-center gap-3 sm:gap-4 2xl:gap-6 mb-6 2xl:mb-8 rounded-3xl bg-white dark:bg-[#151822] border border-gray-200 dark:border-gray-800 shadow-xl p-5 sm:p-8 2xl:p-10"
             >
               <AnimatePresence>
                 {letrasDisponibles.map((letra) => (
@@ -269,7 +273,7 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
                     whileHover={{ scale: 1.05, y: -4 }}
                     whileTap={{ scale: 0.95 }}
                     whileDrag={{ scale: 1.1, zIndex: 50 }}
-                    className="cursor-grab active:cursor-grabbing bg-gray-50 dark:bg-[#1c212c] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-3 w-24 sm:w-28 h-32 sm:h-36 flex flex-col items-center justify-center hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-500 touch-none select-none"
+                    className="cursor-grab active:cursor-grabbing bg-gray-50 dark:bg-[#1c212c] rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-3 w-20 sm:w-24 lg:w-28 2xl:w-32 h-28 sm:h-32 lg:h-36 2xl:h-44 flex flex-col items-center justify-center hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-500 touch-none select-none"
                   >
                     <img
                       src={letra.img}
@@ -284,7 +288,7 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
 
             {/* ZONA SLOTS */}
             <div className="w-full relative mt-2 flex-1 flex flex-col items-center justify-start">
-              <div data-tutorial="deletreo-slots" className="relative w-full bg-white dark:bg-[#151822] rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-800 min-h-[220px] p-8 flex flex-col items-center justify-center">
+              <div data-tutorial="deletreo-slots" className="relative w-full bg-white dark:bg-[#151822] rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-800 min-h-[220px] 2xl:min-h-[280px] p-5 sm:p-8 2xl:p-12 flex flex-col items-center justify-center">
                 <div className="flex flex-wrap justify-center gap-4 z-10 relative">
                   {Array.from({ length: palabraObjetivo.length }).map((_, index) => {
                     const letra = letrasColocadas[index];
@@ -302,7 +306,7 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
                       <div
                         key={`slot-${index}`}
                         ref={(el) => (slotRefs.current[index] = el)}
-                        className="relative w-24 sm:w-28 h-32 sm:h-36 rounded-2xl group"
+                        className="relative w-20 sm:w-24 lg:w-28 2xl:w-32 h-28 sm:h-32 lg:h-36 2xl:h-44 rounded-2xl group"
                       >
                         <div className="absolute inset-0 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50/50 dark:bg-[#1c212c]/60 transition-colors group-hover:border-indigo-300 dark:group-hover:border-indigo-500 group-hover:bg-indigo-50/30 dark:group-hover:bg-indigo-500/10" />
 
@@ -380,6 +384,6 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
       {!juegoTerminado && letrasDisponibles.length > 0 && (
         <Tutorial steps={DELETREO_TUTORIAL_STEPS} storageKey="tourSignAI_deletreo" />
       )}
-    </div>
+    </PageLayout>
   );
 }

@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageHeader from "../common/PageHeader";
 import Tutorial from "../common/Tutorial";
+import PageLayout from "../common/PageLayout";
+import ResponsiveContainer from "../common/ResponsiveContainer";
+import NavCard from "../common/NavCard";
 
 import memoramaImg from "../../assets/memorama.svg";
 import quizImg from "../../assets/quiz.svg";
@@ -54,49 +57,34 @@ export default function JuegosInteractivos({ sidebarOpen, setSidebarOpen }) {
   ];
 
   return (
-    <div
-      // Usamos h-full (sin scroll) y justify-start para que empiece desde arriba como Aprender.jsx
-      className="h-full w-full flex flex-col items-center justify-start text-center 
-      bg-gray-50 dark:bg-[#0b0f19] text-gray-900 dark:text-gray-100 
-      transition-all duration-700 ease-in-out pt-10"
+    <PageLayout
+      contentClassName="items-center justify-start text-center text-gray-900 dark:text-gray-100 transition-colors duration-700 ease-in-out pt-10"
     >
       <PageHeader />
-      
-      {/* 🧩 Contenedor de juegos: 
-          Restauramos la estructura GRID de Aprender.jsx para una distribución perfecta 
-      */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        // Usamos grid como en Aprender, pero con un max-w más generoso para que no se apelmace
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-10 mt-8 px-6 max-w-5xl"
-      >
-        {juegos.map((game, index) => (
-          <motion.div
-            key={index}
-            data-tutorial={game.tutorialKey}
-            onClick={() => navigate(game.path)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            className="cursor-pointer bg-white dark:bg-[#151822] rounded-2xl shadow-lg hover:shadow-indigo-400/20
-                       p-6 w-64 h-64 flex flex-col items-center justify-center
-                       transition-all duration-500 ease-in-out mx-auto border border-transparent hover:border-indigo-500/30"
-          >
-            <img
-              src={game.img}
-              alt={game.title}
-              className="w-28 h-28 object-contain mb-4 drop-shadow-md"
+
+      <ResponsiveContainer size="lg">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 2xl:gap-14 mt-6 sm:mt-8 lg:mt-10 2xl:mt-16"
+        >
+          {juegos.map((game, index) => (
+            <NavCard
+              key={index}
+              title={game.title}
+              img={game.img}
+              tutorialKey={game.tutorialKey}
+              onClick={() => navigate(game.path)}
             />
-            <h3 className="text-lg font-semibold">{game.title}</h3>
-          </motion.div>
-        ))}
-      </motion.div>
+          ))}
+        </motion.div>
+      </ResponsiveContainer>
 
       <Tutorial
         steps={JUEGOS_TUTORIAL_STEPS}
         storageKey="tourSignAI_juegos"
       />
-    </div>
+    </PageLayout>
   );
 }

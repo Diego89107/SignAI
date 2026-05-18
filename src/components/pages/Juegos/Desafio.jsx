@@ -6,6 +6,7 @@ import useCamera from "../../../hooks/useCamera";
 import { palabrasDesafio as listaDesafio } from "../../../data/palabras";
 import PageHeader from "../../common/PageHeader";
 import Tutorial from "../../common/Tutorial";
+import PageLayout from "../../common/PageLayout";
 
 const DESAFIO_TUTORIAL_STEPS_INTRO = [
   {
@@ -104,12 +105,14 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
 
   return (
     // ⚠️ pt-14 empuja todo el contenido hacia arriba justo debajo del botón Volver
-    <div className="relative isolate min-h-screen w-full bg-[#f8f9fa] dark:bg-[#0b0f19] text-gray-900 dark:text-gray-100 flex flex-col pt-14 px-4 sm:px-6 lg:px-8 pb-4">
-      
+    <PageLayout
+      className="min-h-screen"
+      contentClassName="pt-14 px-4 sm:px-6 lg:px-8 2xl:px-12 pb-4 text-gray-900 dark:text-gray-100"
+    >
+
       <PageHeader />
 
-      {/* CONTENEDOR PRINCIPAL */}
-      <div className="flex-1 w-full max-w-4xl mx-auto flex flex-col items-center justify-center">
+      <div className="flex-1 w-full max-w-4xl 2xl:max-w-6xl mx-auto flex flex-col items-center justify-center">
         
         {estadoRonda === "fracaso" || estadoRonda === "terminado" ? (
           <motion.div 
@@ -147,17 +150,17 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
           <div className="w-full flex-1 flex flex-col gap-3 justify-between">
             
             {/* HEADER: Temporizador y Puntaje */}
-            <div className="flex-none w-full flex justify-between items-end px-2">
+            <div className="flex-none w-full flex justify-between items-end px-2 2xl:px-4">
               <div data-tutorial="desafio-temporizador" className="flex flex-col">
-                <span className="text-xs sm:text-sm font-bold tracking-widest text-gray-400 uppercase">Tiempo</span>
-                <div className={`flex items-center gap-1.5 text-3xl sm:text-4xl font-black ${tiempoRestante <= 5 ? 'text-red-500 animate-pulse' : 'text-gray-800 dark:text-white'}`}>
-                  <Timer size={28} />
+                <span className="text-xs sm:text-sm 2xl:text-base font-bold tracking-widest text-gray-400 uppercase">Tiempo</span>
+                <div className={`flex items-center gap-1.5 2xl:gap-2 text-3xl sm:text-4xl 2xl:text-5xl font-black ${tiempoRestante <= 5 ? 'text-red-500 animate-pulse' : 'text-gray-800 dark:text-white'}`}>
+                  <Timer className="w-7 h-7 sm:w-8 sm:h-8 2xl:w-10 2xl:h-10" />
                   0:{tiempoRestante.toString().padStart(2, '0')}
                 </div>
               </div>
               <div data-tutorial="desafio-aciertos" className="text-right">
-                <span className="text-xs sm:text-sm font-bold tracking-widest text-gray-400 uppercase">Aciertos</span>
-                <div className="text-3xl sm:text-4xl font-black text-indigo-600 leading-none">{puntaje}</div>
+                <span className="text-xs sm:text-sm 2xl:text-base font-bold tracking-widest text-gray-400 uppercase">Aciertos</span>
+                <div className="text-3xl sm:text-4xl 2xl:text-5xl font-black text-indigo-600 leading-none">{puntaje}</div>
               </div>
             </div>
 
@@ -232,13 +235,13 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
 
             {/* CAJA DE LA PALABRA OBJETIVO */}
             {/* ⚠️ Compactada para que no robe espacio a la cámara */}
-            <div data-tutorial="desafio-palabra" className="flex-none w-full bg-white dark:bg-[#151822] rounded-3xl shadow-lg border border-gray-200 dark:border-gray-800 py-3 flex flex-col items-center justify-center text-center">
-              <span className="text-xs font-bold tracking-widest text-indigo-500 uppercase mb-0.5">Haz la seña para:</span>
+            <div data-tutorial="desafio-palabra" className="flex-none w-full bg-white dark:bg-[#151822] rounded-3xl shadow-lg border border-gray-200 dark:border-gray-800 py-3 2xl:py-5 flex flex-col items-center justify-center text-center">
+              <span className="text-xs 2xl:text-sm font-bold tracking-widest text-indigo-500 uppercase mb-0.5 2xl:mb-1">Haz la seña para:</span>
               <AnimatePresence mode="wait">
-                <motion.h2 
+                <motion.h2
                   key={rondaActual}
                   initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                  className="text-4xl sm:text-5xl font-black text-gray-900 dark:text-white tracking-wider leading-none"
+                  className="text-4xl sm:text-5xl 2xl:text-7xl font-black text-gray-900 dark:text-white tracking-wider leading-none"
                 >
                   {juegoIniciado ? listaDesafio[rondaActual] : "???"}
                 </motion.h2>
@@ -255,6 +258,6 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
       {juegoIniciado && estadoRonda === "jugando" && (
         <Tutorial steps={DESAFIO_TUTORIAL_STEPS_JUEGO} storageKey="tourSignAI_desafio_juego" />
       )}
-    </div>
+    </PageLayout>
   );
 }

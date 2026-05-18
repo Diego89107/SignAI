@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../../common/PageHeader";
 import Tutorial from "../../common/Tutorial";
+import PageLayout from "../../common/PageLayout";
 
 const MEMORAMA_TUTORIAL_STEPS = [
   {
@@ -128,20 +129,23 @@ export default function Memorama({ sidebarOpen, setSidebarOpen }) {
   };
 
   return (
-    <div className="relative isolate min-h-screen w-full bg-gray-50 dark:bg-[#0b0f19] text-gray-900 dark:text-gray-100 flex flex-col items-center pt-14 pb-10 overflow-hidden px-4 sm:px-6 lg:px-8">
+    <PageLayout
+      className="min-h-screen overflow-hidden"
+      contentClassName="items-center pt-14 pb-10 px-4 sm:px-6 lg:px-8 2xl:px-12 text-gray-900 dark:text-gray-100"
+    >
       <PageHeader />
 
-      <div className="z-10 w-full max-w-6xl px-6 flex flex-col items-center">
+      <div className="z-10 w-full max-w-6xl 2xl:max-w-[1500px] px-4 sm:px-6 2xl:px-8 flex flex-col items-center">
         
         {/* ⚠️ PANTALLA DE VICTORIA */}
         {juegoTerminado ? (
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }} 
             animate={{ scale: 1, opacity: 1 }} 
-            className="bg-white dark:bg-[#151822] rounded-3xl p-12 shadow-xl text-center mt-20 max-w-2xl w-full border border-gray-200 dark:border-gray-800"
+            className="bg-white dark:bg-[#151822] rounded-3xl p-8 sm:p-12 2xl:p-16 shadow-xl text-center mt-12 sm:mt-20 max-w-2xl 2xl:max-w-3xl w-full border border-gray-200 dark:border-gray-800"
           >
-            <h2 className="text-4xl sm:text-5xl font-extrabold text-indigo-600 dark:text-indigo-400 mb-4">¡Excelente!</h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+            <h2 className="text-4xl sm:text-5xl 2xl:text-6xl font-extrabold text-indigo-600 dark:text-indigo-400 mb-4 2xl:mb-6">¡Excelente!</h2>
+            <p className="text-lg sm:text-xl 2xl:text-2xl text-gray-600 dark:text-gray-300 mb-8 2xl:mb-10">
               Encontraste los <strong className="text-indigo-500">{totalPairs}</strong> pares correctamente.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -193,8 +197,8 @@ export default function Memorama({ sidebarOpen, setSidebarOpen }) {
             </div>
 
             <div className="w-full relative mt-2">
-              <div data-tutorial="memorama-tablero" className="relative bg-white dark:bg-[#151822] rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4 sm:gap-6 mx-auto w-full">
+              <div data-tutorial="memorama-tablero" className="relative bg-white dark:bg-[#151822] rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-800 p-4 sm:p-6 lg:p-8 2xl:p-10">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 2xl:grid-cols-7 gap-3 sm:gap-5 lg:gap-6 2xl:gap-8 mx-auto w-full">
                   {cards.map((card, index) => (
                     <motion.div
                       key={card.id}
@@ -228,7 +232,7 @@ export default function Memorama({ sidebarOpen, setSidebarOpen }) {
                             alt={card.palabra}
                             className="w-3/4 h-3/4 object-contain mb-2"
                           />
-                          <p className={`font-bold text-sm sm:text-base uppercase tracking-wide text-center ${card.tipo === "seña" ? "text-[#6366f1]" : "text-[#4b5563] dark:text-[#d1d5db]"}`}>
+                          <p className={`font-bold text-xs sm:text-sm lg:text-base 2xl:text-lg uppercase tracking-wide text-center ${card.tipo === "seña" ? "text-[#6366f1]" : "text-[#4b5563] dark:text-[#d1d5db]"}`}>
                             {card.palabra}
                           </p>
 
@@ -249,6 +253,6 @@ export default function Memorama({ sidebarOpen, setSidebarOpen }) {
       {!juegoTerminado && cards.length > 0 && (
         <Tutorial steps={MEMORAMA_TUTORIAL_STEPS} storageKey="tourSignAI_memorama" />
       )}
-    </div>
+    </PageLayout>
   );
 }

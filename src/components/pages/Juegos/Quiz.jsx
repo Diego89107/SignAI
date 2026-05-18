@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { respuestasIncorrectasQuiz as respuestasIncorrectas } from "../../../data/palabras";
 import PageHeader from "../../common/PageHeader";
 import Tutorial from "../../common/Tutorial";
+import PageLayout from "../../common/PageLayout";
 
 const QUIZ_TUTORIAL_STEPS = [
   {
@@ -124,21 +125,23 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
   const correctaActual = preguntasJuego[preguntaActual]?.palabra;
 
   return (
-    <div className="relative isolate min-h-screen w-full bg-gray-50 dark:bg-[#0b0f19] text-gray-900 dark:text-gray-100 flex flex-col justify-center items-center overflow-hidden pt-14 pb-4 sm:pb-8 px-4 sm:px-6 lg:px-8">
-      
+    <PageLayout
+      className="min-h-screen overflow-hidden"
+      contentClassName="justify-center items-center pt-14 pb-4 sm:pb-8 px-4 sm:px-6 lg:px-8 2xl:px-12 text-gray-900 dark:text-gray-100"
+    >
+
       <PageHeader />
 
-      {/* 🎮 CONTENIDO DEL JUEGO */}
-      <div className="z-10 w-full max-w-5xl px-6">
+      <div className="z-10 w-full max-w-5xl 2xl:max-w-[1400px] px-4 sm:px-6 2xl:px-10">
         
         {juegoTerminado ? (
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }} 
             animate={{ scale: 1, opacity: 1 }} 
-            className="bg-white dark:bg-[#151822] rounded-3xl p-12 shadow-xl text-center max-w-2xl mx-auto border border-gray-200 dark:border-gray-800"
+            className="bg-white dark:bg-[#151822] rounded-3xl p-8 sm:p-12 2xl:p-16 shadow-xl text-center max-w-2xl 2xl:max-w-3xl mx-auto border border-gray-200 dark:border-gray-800"
           >
-            <h2 className="text-4xl sm:text-5xl font-extrabold text-indigo-600 mb-4">¡Excelente!</h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">Has completado todas las preguntas correctamente.</p>
+            <h2 className="text-4xl sm:text-5xl 2xl:text-6xl font-extrabold text-indigo-600 mb-4 2xl:mb-6">¡Excelente!</h2>
+            <p className="text-lg sm:text-xl 2xl:text-2xl text-gray-600 dark:text-gray-300 mb-8 2xl:mb-10">Has completado todas las preguntas correctamente.</p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <button 
                 onClick={reiniciarJuego}
@@ -155,7 +158,7 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
             </div>
           </motion.div>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center justify-center">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 2xl:gap-24 items-center justify-center">
             
             {/* IZQUIERDA: IMAGEN */}
             <motion.div
@@ -164,7 +167,7 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
               initial={{ x: -50, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ type: "spring", stiffness: 100 }}
-              className="bg-white dark:bg-[#151822] rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-800 p-8 w-full max-w-sm aspect-square flex items-center justify-center"
+              className="bg-white dark:bg-[#151822] rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8 2xl:p-12 w-full max-w-sm 2xl:max-w-md aspect-square flex items-center justify-center"
             >
               {preguntasJuego[preguntaActual]?.img ? (
                 <img 
@@ -178,14 +181,13 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
             </motion.div>
 
             {/* DERECHA: BOTONES DE RESPUESTA */}
-            <div data-tutorial="quiz-opciones" className="w-full max-w-md flex flex-col gap-4">
-              
-              {/* Textos superiores */}
+            <div data-tutorial="quiz-opciones" className="w-full max-w-md 2xl:max-w-lg flex flex-col gap-3 sm:gap-4 2xl:gap-5">
+
               <div className="flex flex-col items-center text-center mb-2">
-                <span className="text-sm md:text-base font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-300">
+                <span className="text-sm md:text-base 2xl:text-lg font-bold uppercase tracking-[0.2em] text-indigo-600 dark:text-indigo-300">
                   Pregunta {preguntaActual + 1} de {preguntasJuego.length}
                 </span>
-                <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-sm md:text-base 2xl:text-lg text-gray-500 dark:text-gray-400 mt-1">
                   Elige la palabra que corresponde a la seña mostrada.
                 </p>
               </div>
@@ -211,7 +213,7 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
                     whileTap={{ scale: 0.98 }}
                     onClick={() => manejarClick(opcion)}
                     disabled={bloqueado}
-                    className={`w-full py-3.5 px-6 rounded-2xl border-2 font-semibold text-base md:text-lg text-center shadow-sm transition-all duration-300 ease-in-out ${bgClass}`}
+                    className={`w-full py-3 sm:py-3.5 2xl:py-4 px-5 sm:px-6 2xl:px-8 rounded-2xl border-2 font-semibold text-base md:text-lg 2xl:text-xl text-center shadow-sm transition-all duration-300 ease-in-out ${bgClass}`}
                   >
                     {letras[index]}) {opcion}
                   </motion.button>
@@ -226,6 +228,6 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
       {!juegoTerminado && opciones.length > 0 && (
         <Tutorial steps={QUIZ_TUTORIAL_STEPS} storageKey="tourSignAI_quiz" />
       )}
-    </div>
+    </PageLayout>
   );
 }
