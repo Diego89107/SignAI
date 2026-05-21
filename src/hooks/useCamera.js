@@ -72,5 +72,14 @@ export default function useCamera({ autoStart = false, constraintsList } = {}) {
     return () => stop();
   }, [autoStart, start, stop]);
 
+  // Reasocia el stream al <video> en cuanto el elemento aparece en el DOM.
+  // Necesario cuando el <video> se renderiza condicionalmente sobre `active`,
+  // porque entonces videoRef.current es null al momento de llamar a start().
+  useEffect(() => {
+    if (active && videoRef.current && streamRef.current && videoRef.current.srcObject !== streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+    }
+  }, [active]);
+
   return { videoRef, active, loading, errorMsg, start, stop, setErrorMsg };
 }

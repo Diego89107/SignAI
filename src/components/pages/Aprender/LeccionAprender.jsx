@@ -54,7 +54,7 @@ function ModeloMano({ modeloPath }) {
   const { scene } = useGLTF(modeloPath);
   return (
     <Center>
-      <primitive object={scene} scale={0.75} />
+      <primitive object={scene} scale={0.07} />
     </Center>
   );
 }
@@ -62,7 +62,7 @@ function ModeloMano({ modeloPath }) {
 export default function LeccionAprender({
   items,
   itemInicial,
-  modeloPath = "./mano.glb",
+  modeloPath = "/Mano.glb",
   setSidebarOpen,
 }) {
   const [indiceActual, setIndiceActual] = useState(() => {
@@ -243,7 +243,7 @@ export default function LeccionAprender({
                     </div>
                   }
                 >
-                  <Canvas camera={{ position: [0, 0, 5], fov: 40 }}>
+                  <Canvas camera={{ position: [0, 0, 25], fov: 25 }}>
                     <ambientLight intensity={0.8} />
                     <directionalLight position={[10, 10, 5]} intensity={1.2} />
                     <directionalLight position={[-10, -10, -5]} intensity={0.4} />

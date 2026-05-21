@@ -8,20 +8,11 @@ import PageHeader from "../../common/PageHeader";
 import Tutorial from "../../common/Tutorial";
 import PageLayout from "../../common/PageLayout";
 
-const DESAFIO_TUTORIAL_STEPS_INTRO = [
-  {
-    key: "desafio-iniciar",
-    title: "Iniciar Reto",
-    text: "Pulsa este botón para activar la cámara y empezar el desafío contrarreloj.",
-    placement: "top",
-  },
-];
-
-const DESAFIO_TUTORIAL_STEPS_JUEGO = [
+const DESAFIO_TUTORIAL_STEPS = [
   {
     key: "desafio-temporizador",
     title: "Tiempo",
-    text: "Tienes 20 segundos por seña. Si el reloj llega a cero, pierdes el desafío.",
+    text: "Tendrás 20 segundos por seña. Si el reloj llega a cero, pierdes el desafío.",
     placement: "bottom",
   },
   {
@@ -34,6 +25,12 @@ const DESAFIO_TUTORIAL_STEPS_JUEGO = [
     key: "desafio-palabra",
     title: "Seña objetivo",
     text: "Esta es la palabra que debes representar con tus manos frente a la cámara.",
+    placement: "top",
+  },
+  {
+    key: "desafio-iniciar",
+    title: "Iniciar Reto",
+    text: "Cuando estés listo, pulsa aquí para activar la cámara. Podrás posicionarte antes de que arranque el cronómetro.",
     placement: "top",
   },
 ];
@@ -186,7 +183,7 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
                     )}
                   </AnimatePresence>
 
-                  <button 
+                  <button
                     onClick={() => { stopStream(); setEstadoRonda("fracaso"); }}
                     className="absolute top-4 right-4 bg-red-500/90 hover:bg-red-600 text-white px-4 py-2 rounded-full text-xs font-bold backdrop-blur-sm transition z-20 flex items-center gap-2 shadow-md"
                   >
@@ -194,7 +191,7 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
                   </button>
 
                   {estadoRonda === "jugando" && (
-                    <button 
+                    <button
                       onClick={manejarAcierto}
                       className="absolute bottom-4 right-4 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-full font-bold shadow-lg transition z-20 animate-bounce text-sm"
                     >
@@ -252,12 +249,7 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
         )}
       </div>
 
-      {!juegoIniciado && estadoRonda === "esperando" && !loading && !cameraActive && (
-        <Tutorial steps={DESAFIO_TUTORIAL_STEPS_INTRO} storageKey="tourSignAI_desafio_intro" />
-      )}
-      {juegoIniciado && estadoRonda === "jugando" && (
-        <Tutorial steps={DESAFIO_TUTORIAL_STEPS_JUEGO} storageKey="tourSignAI_desafio_juego" />
-      )}
+      <Tutorial steps={DESAFIO_TUTORIAL_STEPS} storageKey="tourSignAI_desafio" />
     </PageLayout>
   );
 }
