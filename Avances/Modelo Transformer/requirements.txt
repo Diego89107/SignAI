@@ -2,3 +2,8 @@ opencv-python>=4.8,<5
 mediapipe>=0.10.14
 numpy>=1.24,<2.0
 torch>=2.1
+
+# Servidor de inferencia local (server.py)
+fastapi>=0.110
+uvicorn>=0.27
+websockets>=12          # backend WebSocket para uvicorn (necesario para /ws)

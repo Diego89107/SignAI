@@ -8,5 +8,19 @@ win-unpacked/
 Avances/Modelo Transformer/dataset_estatico/
 Avances/Modelo Transformer/dataset_dinamico/
 Avances/Modelo Transformer/dataset_normalizado/
+Avances/Modelo Transformer/dataset.zip
 __pycache__/
 *.pyc
+
+# Datasets y pesos del modelo (no se versionan: inflan el repo)
+*.pth
+/dataset/
+/dataset_normalizado/
+
+# De Avances solo se versiona "Modelo Transformer" (no scripts viejos ni datasets)
+/Avances/*
+!/Avances/Modelo Transformer/
+Avances/Modelo Transformer/analizar_abecedario.py
+
+# Configuracion local de Claude
+.claude/

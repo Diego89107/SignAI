@@ -21,7 +21,6 @@ const QUIZ_TUTORIAL_STEPS = [
   },
 ];
 
-// Imagenes de preguntas ../../../assets/
 import perroImg from "../../../assets/perro.svg";
 import holaImg from "../../../assets/hola.svg";
 import tacosImg from "../../../assets/tacos.svg";
@@ -38,7 +37,6 @@ import libroImg from "../../../assets/libro.svg";
 import ventanaImg from "../../../assets/ventana.svg";
 import cieloImg from "../../../assets/cielo.svg";
 
-// 15 Palabras Correctas (Base maestra)
 const PalabrasCorrectas = [
   { palabra: "Perro", img: perroImg },
   { palabra: "Hola", img: holaImg },
@@ -60,12 +58,11 @@ const PalabrasCorrectas = [
 export default function Quiz({ sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
 
-  // ⚠️ NUEVO ESTADO: Guarda las preguntas revueltas para esta partida
-  const [preguntasJuego, setPreguntasJuego] = useState(() => 
+  // Preguntas barajadas para esta partida
+  const [preguntasJuego, setPreguntasJuego] = useState(() =>
     [...PalabrasCorrectas].sort(() => Math.random() - 0.5)
   );
 
-  // ESTADOS DEL JUEGO
   const [preguntaActual, setPreguntaActual] = useState(0);
   const [opciones, setOpciones] = useState([]);
   const [seleccion, setSeleccion] = useState(null);
@@ -83,7 +80,6 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
   useEffect(() => {
     // Solo revolvemos si el juego NO ha terminado
     if (!juegoTerminado && preguntasJuego.length > 0) {
-      // ⚠️ Ahora leemos de preguntasJuego, que es el arreglo barajado
       const respuestaCorrecta = preguntasJuego[preguntaActual].palabra;
       
       // Elegir 3 incorrectas al azar que NO sean la respuesta correcta
@@ -113,7 +109,6 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
     }, 2000);
   };
 
-  // ⚠️ Función para re-barajar todo si el usuario quiere jugar de nuevo
   const reiniciarJuego = () => {
     setPreguntasJuego([...PalabrasCorrectas].sort(() => Math.random() - 0.5));
     setPreguntaActual(0);
@@ -160,7 +155,6 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
         ) : (
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-16 2xl:gap-24 items-center justify-center">
             
-            {/* IZQUIERDA: IMAGEN */}
             <motion.div
               key={`img-${preguntaActual}`}
               data-tutorial="quiz-imagen"
@@ -180,7 +174,6 @@ export default function Quiz({ sidebarOpen, setSidebarOpen }) {
               )}
             </motion.div>
 
-            {/* DERECHA: BOTONES DE RESPUESTA */}
             <div data-tutorial="quiz-opciones" className="w-full max-w-md 2xl:max-w-lg flex flex-col gap-3 sm:gap-4 2xl:gap-5">
 
               <div className="flex flex-col items-center text-center mb-2">

@@ -27,7 +27,7 @@ const DELETREO_TUTORIAL_STEPS = [
   },
 ];
 
-// ⚠️ Placeholder temporal: todas las letras usan la misma imagen hasta que se agreguen assets reales
+// Placeholder temporal: todas las letras usan la misma imagen hasta tener assets reales
 import imgPlaceholder from "../../../assets/elefante_lsm.svg";
 
 const obtenerImagenLetra = () => imgPlaceholder;
@@ -56,7 +56,6 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
     };
   }, []);
 
-  // Inicializar nivel
   useEffect(() => {
     if (nivelActual >= listaPalabras.length) {
       setJuegoTerminado(true);
@@ -196,7 +195,6 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
       <PageHeader />
 
       <div className="z-10 w-full max-w-5xl 2xl:max-w-[1400px] px-4 sm:px-6 2xl:px-10 flex flex-col items-stretch">
-        {/* Encabezado */}
         <div data-tutorial="deletreo-progreso" className="w-full mb-4 text-center flex flex-col items-center">
           <p className="mt-2 text-sm sm:text-base text-gray-500 dark:text-gray-400 max-w-xl">
             Arrastra las señas a los espacios para formar la palabra correcta. Puedes moverlas entre huecos o regresarlas arriba si te equivocas.
@@ -248,7 +246,6 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
           </div>
         ) : (
           <React.Fragment key={nivelActual}>
-            {/* ZONA DISPONIBLES */}
             <div
               ref={disponiblesRef}
               data-tutorial="deletreo-disponibles"
@@ -286,7 +283,6 @@ export default function Deletreo({ sidebarOpen, setSidebarOpen }) {
               </AnimatePresence>
             </div>
 
-            {/* ZONA SLOTS */}
             <div className="w-full relative mt-2 flex-1 flex flex-col items-center justify-start">
               <div data-tutorial="deletreo-slots" className="relative w-full bg-white dark:bg-[#151822] rounded-[2rem] shadow-xl border border-gray-200 dark:border-gray-800 min-h-[220px] 2xl:min-h-[280px] p-5 sm:p-8 2xl:p-12 flex flex-col items-center justify-center">
                 <div className="flex flex-wrap justify-center gap-4 z-10 relative">

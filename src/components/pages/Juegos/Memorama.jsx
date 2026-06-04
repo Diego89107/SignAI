@@ -20,8 +20,7 @@ const MEMORAMA_TUTORIAL_STEPS = [
   },
 ];
 
-// Asegúrate de que la ruta a tus assets sea correcta
-import dorsoImg from "../../../assets/reverso_carta.svg"; 
+import dorsoImg from "../../../assets/reverso_carta.svg";
 import elefanteImg from "../../../assets/elefante.svg";
 import elefanteLSM from "../../../assets/elefante_lsm.svg"; 
 import verdeImg from "../../../assets/verde.svg";
@@ -47,7 +46,6 @@ export default function Memorama({ sidebarOpen, setSidebarOpen }) {
   const matchedPairs = Math.floor(cards.filter((card) => card.matched).length / 2);
   const progress = totalPairs > 0 ? Math.min(100, (matchedPairs / totalPairs) * 100) : 0;
   
-  // ⚠️ NUEVA REGLA: Verificamos si ya se encontraron todos los pares
   const juegoTerminado = totalPairs > 0 && matchedPairs === totalPairs;
 
   useEffect(() => {
@@ -118,7 +116,6 @@ export default function Memorama({ sidebarOpen, setSidebarOpen }) {
     }
   };
 
-  // Función para reiniciar el juego sin salir de la pantalla
   const reiniciarJuego = () => {
     const newCards = cards
       .map(card => ({ ...card, flipped: false, matched: false }))
@@ -137,7 +134,6 @@ export default function Memorama({ sidebarOpen, setSidebarOpen }) {
 
       <div className="z-10 w-full max-w-6xl 2xl:max-w-[1500px] px-4 sm:px-6 2xl:px-8 flex flex-col items-center">
         
-        {/* ⚠️ PANTALLA DE VICTORIA */}
         {juegoTerminado ? (
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }} 
@@ -164,7 +160,6 @@ export default function Memorama({ sidebarOpen, setSidebarOpen }) {
             </div>
           </motion.div>
         ) : (
-          /* 🎮 INTERFAZ NORMAL DEL JUEGO */
           <>
             <div data-tutorial="memorama-progreso" className="w-full mb-8 text-center flex flex-col items-center">
               <p className="mt-2 text-sm sm:text-base text-gray-500 dark:text-gray-400 max-w-xl">

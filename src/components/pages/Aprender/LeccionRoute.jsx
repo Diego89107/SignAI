@@ -16,6 +16,9 @@ export default function LeccionRoute({ setSidebarOpen }) {
       key={categoria}
       items={items}
       setSidebarOpen={setSidebarOpen}
+      // El abecedario es lo único que el modelo reconoce hoy (señas estáticas
+      // de letras), así que solo ahí validamos automáticamente con la cámara.
+      validarConModelo={categoria === "abecedario"}
     />
   );
 }

@@ -6,11 +6,9 @@ from datetime import datetime
 from pathlib import Path
 
 import numpy as np
+import torch
+import torch.nn as nn
 
-
-# ============================================================================
-# RUTAS
-# ============================================================================
 
 RAIZ = Path(__file__).parent
 DIR_ESTATICO = RAIZ / "dataset_estatico"
@@ -23,10 +21,7 @@ PATH_LABEL_MAP = DIR_MODELOS / "label_map.json"
 PATH_FEATURE_META = DIR_MODELOS / "feature_meta.json"
 
 
-# ============================================================================
-# INDICES DE LANDMARKS (MediaPipe Hands, 21 puntos por mano)
-# ============================================================================
-
+# Indices de landmarks de MediaPipe Hands (21 puntos por mano).
 WRIST = 0
 THUMB_CMC, THUMB_MCP, THUMB_IP, THUMB_TIP = 1, 2, 3, 4
 INDEX_MCP, INDEX_PIP, INDEX_DIP, INDEX_TIP = 5, 6, 7, 8
@@ -51,20 +46,10 @@ INTER_TIP_PAIRS = [
 ]
 
 
-# ============================================================================
-# DIMENSIONES
-# ============================================================================
-# Por mano:
-#   63 coords (21 * XYZ)
-#   + 5 dist wrist->tips
-#   + 4 dist thumb->otros tips
-#   + 3 inter-tips consecutivos
-#   + 15 angulos articulares (3 por dedo * 5 dedos)
-#   + 3 normal de palma
-#   + 1 hand_type (0=Right, 1=Left)
-#   + 1 hand_present
-#   = 95
-
+# Features por mano:
+#   63 coords (21 * XYZ) + 5 dist wrist->tips + 4 dist thumb->otros tips
+#   + 3 inter-tips + 15 angulos articulares + 3 normal de palma
+#   + 1 hand_type (0=Right, 1=Left) + 1 hand_present = 95
 FEAT_COORDS = 21 * 3              # 63
 FEAT_DIST_WRIST = 5
 FEAT_DIST_THUMB = 4
@@ -88,10 +73,6 @@ FEAT_ACC_PER_FRAME = FEAT_COORDS * 2       # 126
 FEAT_DYNAMIC_PER_FRAME = FEAT_STATIC_PER_FRAME + FEAT_VEL_PER_FRAME + FEAT_ACC_PER_FRAME  # 442
 
 
-# ============================================================================
-# PARAMETROS DEL PIPELINE
-# ============================================================================
-
 FPS_OBJETIVO = 25
 MAX_SEQ_LEN = 80                 # padding/truncation para entrenamiento
 
@@ -104,17 +85,14 @@ SEG_COUNTDOWN = 3
 
 FRAMES_ESTATICO = 15             # ~0.6s a 25fps
 
-MS_QUIETUD_PARA_FIN = 400        # fin de grabacion dinamica tras Nms de quietud
-MS_MARGEN_TRIM = 200             # se conservan estos ms extra tras el inicio de la quietud
+MS_QUIETUD_PARA_FIN = 800        # fin de grabacion dinamica tras Nms de quietud
+MS_MARGEN_TRIM = 400             # se conservan estos ms extra tras el inicio de la quietud
 UMBRAL_MOVIMIENTO = 0.008        # distancia media entre frames (coord normalizada)
+UMBRAL_QUIETUD_DINAMICO = 0.004  # umbral de quietud SOLO para auto-stop del grabador dinamico
 
-SEG_MAX_DINAMICO = 4.0
+SEG_MAX_DINAMICO = 6.0
 SEG_MIN_DINAMICO = 0.3
 
-
-# ============================================================================
-# GEOMETRIA
-# ============================================================================
 
 def distancia(p, q) -> float:
     return math.sqrt((p[0]-q[0])**2 + (p[1]-q[1])**2 + (p[2]-q[2])**2)
@@ -145,15 +123,8 @@ def normal_palma(pts) -> tuple[float, float, float]:
     return (float(n[0]), float(n[1]), float(n[2]))
 
 
-# ============================================================================
-# MOVIMIENTO (para auto-stop del recorder y state machine de inferencia)
-# ============================================================================
-
 def promedio_movimiento(pts_prev, pts_curr) -> float:
-    """
-    Distancia euclidea media por landmark entre dos frames consecutivos
-    (21 tuplas cada uno). Si alguno es None devuelve 0.0.
-    """
+    """Distancia euclidea media por landmark entre dos frames consecutivos."""
     if pts_prev is None or pts_curr is None:
         return 0.0
     if len(pts_prev) != len(pts_curr):
@@ -165,11 +136,7 @@ def promedio_movimiento(pts_prev, pts_curr) -> float:
 
 
 def movimiento_global(frame_prev, frame_curr) -> float:
-    """
-    Promedio de movimiento considerando ambas manos. Cada frame_* es:
-      {"Right": [21 tuplas] | None, "Left": [21 tuplas] | None}
-    Solo promedia manos presentes en ambos frames.
-    """
+    """Promedio de movimiento considerando ambas manos; solo las presentes en ambos frames."""
     vals = []
     for lado in ("Right", "Left"):
         if frame_prev.get(lado) and frame_curr.get(lado):
@@ -178,10 +145,6 @@ def movimiento_global(frame_prev, frame_curr) -> float:
         return 0.0
     return sum(vals) / len(vals)
 
-
-# ============================================================================
-# NORMALIZACION Y FEATURES
-# ============================================================================
 
 def puntos_de_landmarks(landmarks) -> list[tuple[float, float, float]]:
     """MediaPipe landmarks -> lista de tuplas (x, y, z)."""
@@ -219,6 +182,11 @@ def features_mano(pts_norm, hand_type: str) -> np.ndarray:
 
     angulos = []
     for chain in FINGER_JOINTS:
+        # angulo en el primer joint del dedo, usando WRIST como ancla previa
+        angulos.append(angulo_3p(
+            pts_norm[WRIST], pts_norm[chain[0]], pts_norm[chain[1]]
+        ))
+        # angulos intermedios (PIP, DIP)
         for i in range(1, len(chain) - 1):
             angulos.append(angulo_3p(
                 pts_norm[chain[i-1]], pts_norm[chain[i]], pts_norm[chain[i+1]]
@@ -245,9 +213,7 @@ def features_mano(pts_norm, hand_type: str) -> np.ndarray:
 
 def vector_mano_ausente(hand_type: str) -> np.ndarray:
     vec = np.zeros(FEAT_PER_HAND, dtype=np.float32)
-    # hand_type se codifica igualmente (por consistencia posicional).
-    vec[FEAT_PER_HAND - 2] = 1.0 if hand_type == "Left" else 0.0
-    # hand_present queda en 0.
+    vec[FEAT_PER_HAND - 2] = 1.0 if hand_type == "Left" else 0.0  # hand_type; hand_present queda en 0
     return vec
 
 
@@ -285,10 +251,6 @@ def aceleraciones(vel_seq: np.ndarray) -> np.ndarray:
         acc[1:] = vel_seq[1:] - vel_seq[:-1]
     return acc
 
-
-# ============================================================================
-# MEDIAPIPE
-# ============================================================================
 
 def crear_hands(num_manos: int, modo_estatico: bool = False):
     """Instancia de MediaPipe Hands con configuracion consistente."""
@@ -330,12 +292,7 @@ def pts_para_features(mano_dict):
     return mano_dict.get("world") or mano_dict.get("image")
 
 
-# ============================================================================
-# IO
-# ============================================================================
-
 def nuevo_session_id() -> str:
-    """Timestamp al momento de iniciar el programa (una sola vez por recorder)."""
     return datetime.now().strftime("%Y%m%d_%H%M%S")
 
 
@@ -360,6 +317,82 @@ def leer_json(path: str | Path) -> dict:
 
 
 def nombre_archivo_muestra(gesto: str, session_id: str, tipo: str) -> str:
-    """Nombre de archivo estandarizado para una muestra."""
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
     return f"{tipo}_{gesto}_{session_id}_{stamp}.json"
+
+
+# Arquitectura del modelo. Se define aqui (modulo compartido) para que la
+# inferencia pueda reconstruir la red y cargar el state_dict sin depender del
+# script de entrenamiento.
+
+class PositionalEncoding(nn.Module):
+    def __init__(self, d_model: int, max_len: int):
+        super().__init__()
+        pe = torch.zeros(max_len, d_model)
+        pos = torch.arange(0, max_len, dtype=torch.float32).unsqueeze(1)
+        div = torch.exp(
+            torch.arange(0, d_model, 2, dtype=torch.float32)
+            * (-math.log(10000.0) / d_model)
+        )
+        pe[:, 0::2] = torch.sin(pos * div)
+        pe[:, 1::2] = torch.cos(pos * div)
+        self.register_buffer("pe", pe, persistent=False)
+
+    def forward(self, x):
+        return x + self.pe[: x.size(1)].unsqueeze(0)
+
+
+class AttentionPool(nn.Module):
+    """Pooling temporal con atencion aprendida, respeta mask (1=valido)."""
+
+    def __init__(self, d_model: int):
+        super().__init__()
+        self.q = nn.Parameter(torch.randn(d_model) * 0.02)
+        self.proj = nn.Linear(d_model, d_model)
+
+    def forward(self, x, mask):
+        scores = torch.matmul(self.proj(x), self.q)          # [B, T]
+        # -inf compatible con fp16/fp32 (evita overflow al usar AMP+torch.compile)
+        neg_inf = torch.finfo(scores.dtype).min
+        scores = scores.masked_fill(mask < 0.5, neg_inf)
+        w = torch.softmax(scores, dim=1)                      # [B, T]
+        pooled = torch.bmm(w.unsqueeze(1), x).squeeze(1)      # [B, d]
+        return pooled
+
+
+class SignTransformer(nn.Module):
+    def __init__(
+        self,
+        input_dim: int,
+        num_classes: int,
+        d_model: int = 256,
+        nhead: int = 8,
+        num_layers: int = 6,
+        dim_ff: int = 1024,
+        dropout: float = 0.15,
+        max_len: int = MAX_SEQ_LEN,
+    ):
+        super().__init__()
+        self.input_proj = nn.Linear(input_dim, d_model)
+        self.input_norm = nn.LayerNorm(d_model)
+        self.pos = PositionalEncoding(d_model, max_len)
+        encoder_layer = nn.TransformerEncoderLayer(
+            d_model=d_model, nhead=nhead, dim_feedforward=dim_ff,
+            dropout=dropout, batch_first=True, activation="gelu",
+            norm_first=True,
+        )
+        self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        self.pool = AttentionPool(d_model)
+        self.head_dropout = nn.Dropout(dropout)
+        self.head = nn.Linear(d_model, num_classes)
+
+    def forward(self, x, mask):
+        # x: [B, T, F], mask: [B, T] (1 valido, 0 pad)
+        x = self.input_proj(x)
+        x = self.input_norm(x)
+        x = self.pos(x)
+        kpm = mask < 0.5
+        x = self.encoder(x, src_key_padding_mask=kpm)
+        pooled = self.pool(x, mask)
+        pooled = self.head_dropout(pooled)
+        return self.head(pooled)

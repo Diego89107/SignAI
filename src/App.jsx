@@ -3,17 +3,14 @@ import { Menu } from "lucide-react";
 import { Routes, Route, useLocation, Outlet } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
-// Componentes Globales
 import Sidebar from "./components/Sidebar";
 import useScrolled from "./hooks/useScrolled";
 
-// Páginas
 import Home from "./components/Home.jsx";
 import Ajustes from "./components/pages/Ajustes";
 import Aprendizaje from "./components/pages/Aprendizaje";
 import Acerca from "./components/pages/Acerca.jsx";
 
-// Páginas "Limpias" (Juegos y Aprendizaje interactivo)
 import Desafio from "./components/pages/Juegos/Desafio.jsx";
 import Deletreo from "./components/pages/Juegos/Deletreo";
 import Camara from "./components/pages/Camara";
@@ -135,10 +132,7 @@ export default function App() {
           sidebarOpen ? "ml-60" : "ml-0"
         }`}
       >
-        {/* ⚠️ CAMBIO CLAVE: Al <main> también se le agregó flex flex-col */}
         <main className="flex-1 flex flex-col relative overflow-y-auto overflow-x-hidden scroll-smooth">
-          
-          {/* ⚠️ CAMBIO CLAVE: La cadena de divs internos ahora usan flex-1 en lugar de min-h-full */}
           <div className="flex-1 flex flex-col w-full">
             <TransitionGroup component={null}>
               <CSSTransition

@@ -6,7 +6,6 @@ import useTheme from "../hooks/useTheme";
 export default function Sidebar({ isOpen, setIsOpen }) {
   const isDark = useTheme();
 
-  // 🔹 Clases base (mantienen tu estilo original)
   const base =
     "group flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 font-medium";
   const active =
@@ -26,7 +25,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}
     >
-      {/* 🔹 Encabezado */}
       <div>
         <div
           className={`flex justify-between items-center border-b px-4 py-4 ${
@@ -52,7 +50,6 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           </button>
         </div>
 
-        {/* 🔹 Navegación */}
         <nav className="mt-4 flex flex-col space-y-2 px-2">
           <NavLink
             to="/"

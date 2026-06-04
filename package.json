@@ -6,6 +6,7 @@
   "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
+    "server": "py \"Avances/Modelo Transformer/SignAI Server.py\"",
     "start": "electron .",
     "build": "vite build",
     "preview": "vite preview",

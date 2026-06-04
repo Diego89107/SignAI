@@ -109,7 +109,6 @@ export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) 
     <PageLayout className="min-h-[calc(100vh-6rem)] overflow-hidden">
       <ResponsiveContainer size="xl" className="relative py-8 sm:py-12 2xl:py-20">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 2xl:gap-20 items-center mb-12 sm:mb-16 2xl:mb-24">
-          {/* Columna izquierda: imagen */}
           <motion.div
             className="relative order-2 lg:order-1"
             initial="hidden"
@@ -127,7 +126,6 @@ export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) 
                 alt="Manos LSM"
                 className="w-full h-auto max-h-[420px] 2xl:max-h-[560px] object-cover rounded-3xl shadow-[0_20px_60px_-15px_rgba(79,70,229,0.45)] dark:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.8)] border border-white/40 dark:border-white/5"
               />
-              {/* Badge flotante */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -145,7 +143,6 @@ export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) 
             </motion.div>
           </motion.div>
 
-          {/* Columna derecha: texto + CTA */}
           <div className="order-1 lg:order-2 text-center lg:text-left">
             <motion.div
               initial="hidden"
@@ -213,7 +210,6 @@ export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) 
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 2xl:gap-20 items-start">
-          {/* CÓMO FUNCIONA */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -249,7 +245,6 @@ export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) 
             </div>
           </motion.div>
 
-          {/* RECOMENDACIONES (CUADRO ÚNICO) */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -257,7 +252,6 @@ export default function Home({ sidebarOpen, setSidebarOpen, onTutorialChange }) 
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="relative bg-white/80 dark:bg-[#151822]/80 backdrop-blur rounded-2xl 2xl:rounded-3xl border border-gray-200 dark:border-[#1f2833] shadow-lg p-6 2xl:p-9 overflow-hidden"
           >
-            {/* Acento de fondo */}
             <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-indigo-400/10 dark:bg-indigo-400/5 blur-2xl pointer-events-none" />
 
             <div className="relative flex items-center gap-2 2xl:gap-3 mb-5 2xl:mb-7">

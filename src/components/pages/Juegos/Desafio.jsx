@@ -38,7 +38,6 @@ const DESAFIO_TUTORIAL_STEPS = [
 export default function Desafio({ sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
 
-  // ESTADOS DEL JUEGO
   const [juegoIniciado, setJuegoIniciado] = useState(false);
   const [rondaActual, setRondaActual] = useState(0);
   const [estadoRonda, setEstadoRonda] = useState("esperando");
@@ -51,7 +50,6 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
     if (typeof setSidebarOpen === "function") setSidebarOpen(false);
   }, [setSidebarOpen]);
 
-  // LÓGICA DEL TEMPORIZADOR
   useEffect(() => {
     let timer;
     if (juegoIniciado && estadoRonda === "jugando" && tiempoRestante > 0) {
@@ -101,7 +99,7 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
   };
 
   return (
-    // ⚠️ pt-14 empuja todo el contenido hacia arriba justo debajo del botón Volver
+    // pt-14 empuja el contenido justo debajo del botón Volver
     <PageLayout
       className="min-h-screen"
       contentClassName="pt-14 px-4 sm:px-6 lg:px-8 2xl:px-12 pb-4 text-gray-900 dark:text-gray-100"
@@ -143,10 +141,8 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
           </motion.div>
         ) : (
 
-          /* INTERFAZ PRINCIPAL - Uso de flex-1 estricto */
           <div className="w-full flex-1 flex flex-col gap-3 justify-between">
             
-            {/* HEADER: Temporizador y Puntaje */}
             <div className="flex-none w-full flex justify-between items-end px-2 2xl:px-4">
               <div data-tutorial="desafio-temporizador" className="flex flex-col">
                 <span className="text-xs sm:text-sm 2xl:text-base font-bold tracking-widest text-gray-400 uppercase">Tiempo</span>
@@ -161,8 +157,7 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
               </div>
             </div>
 
-            {/* 📷 ÁREA DE LA CÁMARA */}
-            {/* ⚠️ Al tener flex-1, esta caja se comerá TODO el espacio vertical sobrante, haciéndose grande y proporcional */}
+            {/* flex-1: esta caja ocupa todo el espacio vertical sobrante */}
             <div className="flex-1 w-full bg-gray-200 dark:bg-[#1c212c] rounded-3xl flex flex-col items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-700 relative overflow-hidden shadow-inner min-h-[300px]">
               
               {cameraActive ? (
@@ -230,8 +225,7 @@ export default function Desafio({ sidebarOpen, setSidebarOpen }) {
               )}
             </div>
 
-            {/* CAJA DE LA PALABRA OBJETIVO */}
-            {/* ⚠️ Compactada para que no robe espacio a la cámara */}
+            {/* Compactada para no robar espacio a la cámara */}
             <div data-tutorial="desafio-palabra" className="flex-none w-full bg-white dark:bg-[#151822] rounded-3xl shadow-lg border border-gray-200 dark:border-gray-800 py-3 2xl:py-5 flex flex-col items-center justify-center text-center">
               <span className="text-xs 2xl:text-sm font-bold tracking-widest text-indigo-500 uppercase mb-0.5 2xl:mb-1">Haz la seña para:</span>
               <AnimatePresence mode="wait">
