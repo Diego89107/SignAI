@@ -1,6 +1,10 @@
 node_modules
 release/
 dist/
+
+# Documentacion viva (boveda Obsidian) - intencionalmente fuera del control de versiones
+docs/
+CLAUDE.md
 win-unpacked/
 .env
 .env.local
